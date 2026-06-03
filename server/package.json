@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Socket.IO server for FIFA World Cup tournament",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"
