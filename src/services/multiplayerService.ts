@@ -26,7 +26,6 @@ class MultiplayerService {
 
     this.socket.on('connect', () => {
       console.log('Connected to multiplayer server')
-      this.emit('player-connected', { playerId: this.playerId })
     })
 
     this.socket.on('disconnect', () => {
