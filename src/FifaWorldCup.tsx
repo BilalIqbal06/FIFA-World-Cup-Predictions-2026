@@ -995,6 +995,10 @@ const sampleGames: Game[] = [
 // Stats are calculated from actual match results as games progress
 
 
+function StatsSection() {
+  const [playerStats, setPlayerStats] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
   useEffect(() => {
     async function loadStats() {
       try {
@@ -1899,5 +1903,6 @@ export default function FifaWorldCup() {
     </div>
   )
 }
+
 
 
