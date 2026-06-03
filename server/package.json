@@ -1,11 +1,12 @@
 {
-  "name": "subdiv-maker-server",
+  "name": "fifa-world-cup-server",
   "version": "1.0.0",
   "description": "Socket.IO server for FIFA World Cup tournament",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "build": "echo 'No build step required'"
   },
   "dependencies": {
     "socket.io": "^4.7.2",
