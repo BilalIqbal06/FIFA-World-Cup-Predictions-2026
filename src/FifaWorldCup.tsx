@@ -1,6 +1,3 @@
-import { useState, useEffect } from 'react'
-
-type PredictionType = 'home' | 'away' | 'tie'
 type GameStatus = 'upcoming' | 'live' | 'finished'
 type TabType = 'predictions' | 'stats' | 'standings'
 
@@ -997,61 +994,6 @@ const sampleGames: Game[] = [
 // Team stats will be fetched dynamically from ESPN API during the tournament
 // Stats are calculated from actual match results as games progress
 
-function StatsSection() {
-  const [playerStats, setPlayerStats] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-
-  // Initialize all 48 teams with zero stats (matching sampleGames IDs and flags)
-  const allTeams = [
-    { id: 'mx', name: 'Mexico', flag: '🇲🇽' },
-    { id: 'za', name: 'South Africa', flag: '🇿🇦' },
-    { id: 'kr', name: 'Korea Republic', flag: '🇰🇷' },
-    { id: 'cz', name: 'Czechia', flag: '🇨🇿' },
-    { id: 'ca', name: 'Canada', flag: '🇨🇦' },
-    { id: 'ba', name: 'Bosnia and Herzegovina', flag: '🇧🇦' },
-    { id: 'qa', name: 'Qatar', flag: '🇶🇦' },
-    { id: 'ch', name: 'Switzerland', flag: '🇨🇭' },
-    { id: 'ht', name: 'Haiti', flag: '🇭🇹' },
-    { id: 'gb-sct', name: 'Scotland', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' },
-    { id: 'br', name: 'Brazil', flag: '🇧🇷' },
-    { id: 'ma', name: 'Morocco', flag: '🇲🇦' },
-    { id: 'us', name: 'USA', flag: '🇺🇸' },
-    { id: 'py', name: 'Paraguay', flag: '🇵🇾' },
-    { id: 'au', name: 'Australia', flag: '🇦🇺' },
-    { id: 'tr', name: 'Türkiye', flag: '🇹🇷' },
-    { id: 'ci', name: 'Côte d\'Ivoire', flag: '🇨🇮' },
-    { id: 'ec', name: 'Ecuador', flag: '🇪🇨' },
-    { id: 'de', name: 'Germany', flag: '🇩🇪' },
-    { id: 'cw', name: 'Curaçao', flag: '🇨🇼' },
-    { id: 'nl', name: 'Netherlands', flag: '🇳🇱' },
-    { id: 'jp', name: 'Japan', flag: '🇯🇵' },
-    { id: 'se', name: 'Sweden', flag: '🇸🇪' },
-    { id: 'tn', name: 'Tunisia', flag: '🇹🇳' },
-    { id: 'ir', name: 'IR Iran', flag: '🇮🇷' },
-    { id: 'nz', name: 'New Zealand', flag: '🇳🇿' },
-    { id: 'be', name: 'Belgium', flag: '🇧🇪' },
-    { id: 'eg', name: 'Egypt', flag: '🇪🇬' },
-    { id: 'sa', name: 'Saudi Arabia', flag: '🇸🇦' },
-    { id: 'es', name: 'Spain', flag: '🇪🇸' },
-    { id: 'cv', name: 'Cabo Verde', flag: '🇨🇻' },
-    { id: 'uy', name: 'Uruguay', flag: '🇺🇾' },
-    { id: 'fr', name: 'France', flag: '🇫🇷' },
-    { id: 'sn', name: 'Senegal', flag: '🇸🇳' },
-    { id: 'iq', name: 'Iraq', flag: '🇮🇶' },
-    { id: 'no', name: 'Norway', flag: '🇳🇴' },
-    { id: 'ar', name: 'Argentina', flag: '🇦🇷' },
-    { id: 'dz', name: 'Algeria', flag: '🇩🇿' },
-    { id: 'at', name: 'Austria', flag: '🇦🇹' },
-    { id: 'jo', name: 'Jordan', flag: '🇯🇴' },
-    { id: 'gh', name: 'Ghana', flag: '��' },
-    { id: 'pa', name: 'Panama', flag: '��' },
-    { id: 'gb-eng', name: 'England', flag: '�󠁧󠁢󠁥󠁮󠁧󠁿' },
-    { id: 'hr', name: 'Croatia', flag: '��' },
-    { id: 'pt', name: 'Portugal', flag: '��' },
-    { id: 'uz', name: 'Uzbekistan', flag: '🇺�' },
-    { id: 'co', name: 'Colombia', flag: '��' },
-    { id: 'cd', name: 'Congo DR', flag: '��' },
-  ]
 
   useEffect(() => {
     async function loadStats() {
@@ -1336,7 +1278,7 @@ function StandingsSection() {
                           <td className="py-2 px-2 text-center text-yellow-400 font-bold w-10">{points}</td>
                           <td className="py-2 px-2 w-32">
                             <div className="flex gap-1 justify-center">
-                              {team.last5Games.map((result, idx) => (
+                              {team.last5Games.map((result: string, idx: number) => (
                                 <div
                                   key={idx}
                                   className={`w-5 h-5 rounded-full ${
