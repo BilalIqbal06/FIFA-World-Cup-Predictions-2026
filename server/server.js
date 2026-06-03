@@ -1,6 +1,6 @@
-import { createServer } from 'http'
-import { Server } from 'socket.io'
-import cors from 'cors'
+const { createServer } = require('http')
+const { Server } = require('socket.io')
+const cors = require('cors')
 
 const httpServer = createServer()
 const PORT = process.env.PORT || 3001
