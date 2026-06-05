@@ -202,6 +202,7 @@ export default function TournamentApp() {
     setCurrentScreen('tournament')
     console.log('Calling multiplayerService.startTournament')
     multiplayerService.startTournament()
+    console.log('Screen set to:', 'tournament')
   }
 
   const handleLeave = () => {

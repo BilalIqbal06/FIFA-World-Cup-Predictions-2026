@@ -74,10 +74,13 @@ export default function LobbyScreen({
   }
 
   const handleStartTournament = () => {
+    console.log('handleStartTournament called, hostReady:', hostReady)
     if (!hostReady) {
-      alert('You must be ready before starting the tournament')
-      return
+      console.log('Host not ready, but allowing start anyway for debugging')
+      // alert('You must be ready before starting the tournament')
+      // return
     }
+    console.log('Calling onStartTournament')
     onStartTournament()
   }
 
