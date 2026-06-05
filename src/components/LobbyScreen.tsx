@@ -236,8 +236,7 @@ export default function LobbyScreen({
             {isHost && (
               <button
                 onClick={handleStartTournament}
-                disabled={!hostReady}
-                className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-xl font-bold py-4 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="w-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white text-xl font-bold py-4 px-6 rounded-xl transition-all shadow-lg"
               >
                 🚀 Start Tournament
               </button>
