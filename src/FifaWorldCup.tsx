@@ -1,5 +1,6 @@
 type GameStatus = 'upcoming' | 'live' | 'finished'
 type TabType = 'predictions' | 'stats' | 'standings'
+type PredictionType = 'home' | 'away' | 'tie'
 
 interface Team {
   id: string
