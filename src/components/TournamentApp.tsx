@@ -195,9 +195,12 @@ export default function TournamentApp() {
 
   const handleStartTournament = () => {
     if (!tournament) return
+    console.log('Starting tournament:', tournament.id)
     const updated = { ...tournament, status: 'in_progress' as const }
     setTournament(updated)
+    console.log('Setting screen to tournament')
     setCurrentScreen('tournament')
+    console.log('Calling multiplayerService.startTournament')
     multiplayerService.startTournament()
   }
 
