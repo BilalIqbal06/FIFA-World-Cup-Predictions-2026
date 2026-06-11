@@ -11,7 +11,7 @@ if (!supabaseUrl || !supabaseKey) {
 export const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null
 
 export const supabaseService = {
-  // Get player by player code
+  // Get player by player code (using RPC function)
   async getPlayer(playerCode: string) {
     if (!supabase) {
       console.warn('Supabase not configured, returning null player')
@@ -19,10 +19,7 @@ export const supabaseService = {
     }
     
     const { data, error } = await supabase
-      .from('players')
-      .select('*')
-      .eq('player_code', playerCode)
-      .single()
+      .rpc('get_player', { p_player_code: playerCode })
     
     if (error) {
       if (error.code === 'PGRST116') {
@@ -31,16 +28,21 @@ export const supabaseService = {
       throw error
     }
     
+    if (!data || data.length === 0) {
+      return null
+    }
+    
+    const player = data[0]
     return {
-      id: data.id,
-      username: data.username,
-      betTeamId: data.winner_pick_team_id,
-      betTeamName: data.winner_pick_team_name,
-      points: data.points
+      id: player.id,
+      username: player.username,
+      betTeamId: player.winner_pick_team_id,
+      betTeamName: player.winner_pick_team_name,
+      points: player.points
     }
   },
 
-  // Create new player
+  // Create new player (using RPC function)
   async createPlayer(playerCode: string, username: string) {
     if (!supabase) {
       console.warn('Supabase not configured, returning mock player')
@@ -54,23 +56,24 @@ export const supabaseService = {
     }
     
     const { data, error } = await supabase
-      .from('players')
-      .insert({
-        player_code: playerCode,
-        username: username,
-        points: 0
+      .rpc('create_player', { 
+        p_player_code: playerCode, 
+        p_username: username 
       })
-      .select()
-      .single()
     
     if (error) throw error
     
+    if (!data || data.length === 0) {
+      throw new Error('Failed to create player')
+    }
+    
+    const player = data[0]
     return {
-      id: data.id,
-      username: data.username,
-      betTeamId: data.winner_pick_team_id,
-      betTeamName: data.winner_pick_team_name,
-      points: data.points
+      id: player.id,
+      username: player.username,
+      betTeamId: player.winner_pick_team_id,
+      betTeamName: player.winner_pick_team_name,
+      points: player.points
     }
   },
 
@@ -81,22 +84,22 @@ export const supabaseService = {
       return []
     }
     
+    // Use public_leaderboard view to avoid exposing private data
     const { data, error } = await supabase
-      .from('players')
-      .select('id, username, points, winner_pick_team_name')
-      .order('points', { ascending: false })
+      .from('public_leaderboard')
+      .select('*')
     
     if (error) throw error
     
     return data.map(player => ({
-      id: player.id,
+      id: player.username, // Use username as ID since view doesn't expose UUID
       username: player.username,
       points: player.points,
-      betTeamName: player.winner_pick_team_name
+      betTeamName: null // Winner picks are private, not exposed in view
     }))
   },
 
-  // Update winner pick (locked after first submission)
+  // Update winner pick (locked after first submission) - using RPC function
   async updateWinnerPick(playerCode: string, teamId: string, teamName: string) {
     if (!supabase) {
       console.warn('Supabase not configured, returning mock player')
@@ -110,79 +113,59 @@ export const supabaseService = {
     }
     
     const { data, error } = await supabase
-      .from('players')
-      .update({
-        winner_pick_team_id: teamId,
-        winner_pick_team_name: teamName,
-        winner_pick_locked: true
+      .rpc('update_winner_pick', { 
+        p_player_code: playerCode,
+        p_team_id: teamId,
+        p_team_name: teamName
       })
-      .eq('player_code', playerCode)
-      .select()
-      .single()
     
     if (error) throw error
     
+    if (!data || data.length === 0) {
+      throw new Error('Failed to update winner pick')
+    }
+    
+    const player = data[0]
     return {
-      id: data.id,
-      username: data.username,
-      betTeamId: data.winner_pick_team_id,
-      betTeamName: data.winner_pick_team_name,
-      points: data.points
+      id: player.id,
+      username: player.username,
+      betTeamId: player.winner_pick_team_id,
+      betTeamName: player.winner_pick_team_name,
+      points: player.points
     }
   },
 
-  // Save prediction for a game
+  // Save prediction for a game (using RPC function)
   async savePrediction(playerCode: string, gameId: string, prediction: string, wager?: number) {
     if (!supabase) {
       console.warn('Supabase not configured, skipping prediction save')
       return
     }
     
-    // First get player ID
-    const { data: player } = await supabase
-      .from('players')
-      .select('id')
-      .eq('player_code', playerCode)
-      .single()
-    
-    if (!player) throw new Error('Player not found')
-    
-    // Upsert prediction
     const { error } = await supabase
-      .from('predictions')
-      .upsert({
-        player_id: player.id,
-        game_id: gameId,
-        prediction: prediction,
-        wager: wager || 0
+      .rpc('save_prediction', { 
+        p_player_code: playerCode,
+        p_game_id: gameId,
+        p_prediction: prediction,
+        p_wager: wager || 0
       })
     
     if (error) throw error
   },
 
-  // Get player's predictions
+  // Get player's predictions (using RPC function)
   async getPlayerPredictions(playerCode: string) {
     if (!supabase) {
       console.warn('Supabase not configured, returning empty predictions')
       return []
     }
     
-    const { data: player } = await supabase
-      .from('players')
-      .select('id')
-      .eq('player_code', playerCode)
-      .single()
-    
-    if (!player) return []
-    
     const { data, error } = await supabase
-      .from('predictions')
-      .select('*')
-      .eq('player_id', player.id)
+      .rpc('get_player_predictions', { p_player_code: playerCode })
     
     if (error) throw error
     
-    return data
+    return data || []
   },
 
   // Subscribe to real-time leaderboard updates
