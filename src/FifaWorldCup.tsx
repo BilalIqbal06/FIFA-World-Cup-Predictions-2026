@@ -1014,8 +1014,8 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
 
   const [games] = useState<Game[]>(sampleGames)
   const [predictions, setPredictions] = useState<Map<string, UserPrediction>>(new Map())
-  const currentDate = new Date('2026-06-10T00:00:00')
-  const [selectedDate, setSelectedDate] = useState(new Date('2026-06-11T12:00:00'))
+  const currentDate = new Date()
+  const [selectedDate, setSelectedDate] = useState(new Date())
   const [userPoints, setUserPoints] = useState(0)
   const [showRules, setShowRules] = useState(false)
   const [wagerAmount, setWagerAmount] = useState<Map<string, number>>(new Map())
@@ -1038,12 +1038,12 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
     }
     
     // Calculate the day before the game at 12:00 AM EST
-    const dayBefore = new Date(gameDate)
-    dayBefore.setDate(dayBefore.getDate() - 1)
-    dayBefore.setHours(0, 0, 0, 0)
+    const predictionOpenDate = new Date(gameDate)
+    predictionOpenDate.setDate(predictionOpenDate.getDate() - 1)
+    predictionOpenDate.setHours(0, 0, 0, 0)
     
     // Available from day before at 00:00 until game kickoff
-    return now >= dayBefore && now < gameDate && game.status === 'upcoming'
+    return now >= predictionOpenDate && now < gameDate && game.status === 'upcoming'
   }
 
   // Check if predictions are open for a specific date
