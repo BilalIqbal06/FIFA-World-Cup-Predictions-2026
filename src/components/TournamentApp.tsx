@@ -11,8 +11,9 @@ export default function TournamentApp() {
   const [playerCode, setPlayerCode] = useState<string>('')
   const [allPlayers, setAllPlayers] = useState<Player[]>([])
   const [errorMessage, setErrorMessage] = useState('')
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Load persisted state on mount
+  // Load persisted state on mount with retry logic
   useEffect(() => {
     const storedPlayerCode = localStorage.getItem('playerCode')
     const storedUsername = localStorage.getItem('username')
@@ -21,25 +22,41 @@ export default function TournamentApp() {
     if (storedPlayerCode && storedUsername) {
       console.log('🔄 Restoring session from localStorage:', { storedPlayerCode, storedUsername })
       setPlayerCode(storedPlayerCode)
-      // Fetch player data from Supabase
-      supabaseService.getPlayer(storedPlayerCode).then(data => {
-        if (data) {
-          console.log('✅ Player restored from Supabase:', data)
-          setCurrentPlayer(data)
-          loadAllPlayers()
-          setCurrentScreen(storedScreen || 'tournament')
-        } else {
-          // Player not found, go to welcome screen
-          console.warn('⚠️ Player not found in Supabase, clearing localStorage')
-          localStorage.removeItem('playerCode')
-          localStorage.removeItem('username')
-          setCurrentScreen('welcome')
+      
+      // Fetch player data from Supabase with retry logic
+      const fetchPlayerWithRetry = async (retryCount = 0) => {
+        try {
+          const data = await supabaseService.getPlayer(storedPlayerCode)
+          if (data) {
+            console.log('✅ Player restored from Supabase:', data)
+            setCurrentPlayer(data)
+            loadAllPlayers()
+            setCurrentScreen(storedScreen || 'tournament')
+          } else {
+            // Player not found, go to welcome screen
+            console.warn('⚠️ Player not found in Supabase, clearing localStorage')
+            localStorage.removeItem('playerCode')
+            localStorage.removeItem('username')
+            setCurrentScreen('welcome')
+          }
+        } catch (err) {
+          console.error('❌ Error fetching player (attempt', retryCount + 1, '):', err)
+          if (retryCount < 1) {
+            console.log('🔄 Retrying get_player...')
+            setTimeout(() => fetchPlayerWithRetry(retryCount + 1), 1000)
+          } else {
+            console.error('❌ Failed after retry, showing error screen')
+            setErrorMessage('Failed to load your data. Please try again.')
+            setCurrentScreen('error')
+          }
+        } finally {
+          setIsLoading(false)
         }
-      }).catch(err => {
-        console.error('❌ Error fetching player:', err)
-        setErrorMessage('Failed to load your data. Please try again.')
-        setCurrentScreen('error')
-      })
+      }
+      
+      fetchPlayerWithRetry()
+    } else {
+      setIsLoading(false)
     }
   }, [])
 
@@ -132,6 +149,57 @@ export default function TournamentApp() {
     setCurrentScreen('welcome')
   }
 
+  // Handle retry from error screen
+  const handleRetry = () => {
+    setErrorMessage('')
+    setIsLoading(true)
+    const storedPlayerCode = localStorage.getItem('playerCode')
+    const storedUsername = localStorage.getItem('username')
+    const storedScreen = localStorage.getItem('currentScreen') as ScreenType
+
+    if (storedPlayerCode && storedUsername) {
+      setPlayerCode(storedPlayerCode)
+      const fetchPlayerWithRetry = async () => {
+        try {
+          const data = await supabaseService.getPlayer(storedPlayerCode)
+          if (data) {
+            console.log('✅ Player restored from Supabase (retry):', data)
+            setCurrentPlayer(data)
+            loadAllPlayers()
+            setCurrentScreen(storedScreen || 'tournament')
+          } else {
+            console.warn('⚠️ Player not found in Supabase (retry), clearing localStorage')
+            localStorage.removeItem('playerCode')
+            localStorage.removeItem('username')
+            setCurrentScreen('welcome')
+          }
+        } catch (err) {
+          console.error('❌ Error fetching player on retry:', err)
+          setErrorMessage('Failed to load your data. Please try again.')
+          setCurrentScreen('error')
+        } finally {
+          setIsLoading(false)
+        }
+      }
+      fetchPlayerWithRetry()
+    } else {
+      setIsLoading(false)
+      setCurrentScreen('welcome')
+    }
+  }
+
+  // Render loading screen
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-950 via-blue-950 to-red-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4 animate-spin">⚽</div>
+          <h2 className="text-2xl font-bold text-white">Loading Tournament...</h2>
+        </div>
+      </div>
+    )
+  }
+
   // Render appropriate screen
   if (currentScreen === 'welcome') {
     return (
@@ -146,6 +214,7 @@ export default function TournamentApp() {
       <ErrorScreen
         errorMessage={errorMessage}
         onBack={handleBackFromError}
+        onRetry={handleRetry}
       />
     )
   }

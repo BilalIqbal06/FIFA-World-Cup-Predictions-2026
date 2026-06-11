@@ -1,9 +1,10 @@
 interface ErrorScreenProps {
   errorMessage: string
   onBack: () => void
+  onRetry?: () => void
 }
 
-export default function ErrorScreen({ errorMessage, onBack }: ErrorScreenProps) {
+export default function ErrorScreen({ errorMessage, onBack, onRetry }: ErrorScreenProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-900 via-black to-red-900 flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
@@ -51,13 +52,23 @@ export default function ErrorScreen({ errorMessage, onBack }: ErrorScreenProps) 
             </ul>
           </div>
 
-          {/* Action Button */}
-          <button
-            onClick={onBack}
-            className="w-full bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700 text-white text-xl font-semibold py-4 px-6 rounded-xl transition-all shadow-lg"
-          >
-            ← Go Back
-          </button>
+          {/* Action Buttons */}
+          <div className="space-y-4">
+            {onRetry && (
+              <button
+                onClick={onRetry}
+                className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-xl font-semibold py-4 px-6 rounded-xl transition-all shadow-lg"
+              >
+                🔄 Try Again
+              </button>
+            )}
+            <button
+              onClick={onBack}
+              className="w-full bg-gradient-to-r from-red-500 to-orange-600 hover:from-red-600 hover:to-orange-700 text-white text-xl font-semibold py-4 px-6 rounded-xl transition-all shadow-lg"
+            >
+              ← Go Back
+            </button>
+          </div>
         </div>
 
         {/* Footer */}
