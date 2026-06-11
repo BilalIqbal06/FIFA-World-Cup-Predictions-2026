@@ -1,35 +1,13 @@
 // Tournament Types and Interfaces
 
-export type ScreenType = 'welcome' | 'host' | 'join' | 'lobby' | 'tournament'
+export type ScreenType = 'welcome' | 'tournament' | 'error'
 
 export interface Player {
   id: string
   username: string
-  isHost: boolean
-  isReady: boolean
   betTeamId?: string
   betTeamName?: string
   points: number
-}
-
-export interface Tournament {
-  id: string
-  code: string
-  name: string
-  hostId: string
-  players: Player[]
-  status: 'lobby' | 'in_progress' | 'finished'
-  createdAt: Date
-}
-
-export interface TournamentState {
-  currentScreen: ScreenType
-  tournament: Tournament | null
-  currentPlayer: Player | null
-  joinCode: string
-  tournamentName: string
-  username: string
-  selectedBetTeam: string
 }
 
 export interface Team {

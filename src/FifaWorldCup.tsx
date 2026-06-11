@@ -1,5 +1,8 @@
+import { useState, useEffect } from 'react'
+import type { Player } from './types/tournament'
+import { WORLD_CUP_TEAMS } from './types/tournament'
+
 type GameStatus = 'upcoming' | 'live' | 'finished'
-type TabType = 'predictions' | 'stats' | 'standings'
 type PredictionType = 'home' | 'away' | 'tie'
 
 interface Team {
@@ -989,333 +992,26 @@ const sampleGames: Game[] = [
   }
 ]
 
-// Player stats will be fetched dynamically from ESPN API during the tournament
-// Stats are calculated from actual match results as games progress
+interface FifaWorldCupProps {
+  currentPlayer: Player
+  allPlayers: Player[]
+  onPlaceBet: (teamId: string, teamName: string) => void
+  onPrediction: (gameId: string, prediction: string, wager?: number) => Promise<void>
+}
 
-// Team stats will be fetched dynamically from ESPN API during the tournament
-// Stats are calculated from actual match results as games progress
-
-
-function StatsSection() {
-  const [playerStats, setPlayerStats] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    async function loadStats() {
-      try {
-        setLoading(true)
-        setPlayerStats([])
-      } catch (error) {
-        console.error('Failed to load stats:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-    loadStats()
-    
-    // Refresh stats every 5 minutes during tournament
-    const interval = setInterval(loadStats, 300000)
-    return () => clearInterval(interval)
-  }, [])
-
-  return (
-    <div className="space-y-6">
-      <div className="bg-gradient-to-br from-green-950/80 via-blue-950/80 to-red-950/80 backdrop-blur-lg rounded-2xl p-6 border border-yellow-500/30 shadow-xl">
-        <h2 className="text-2xl font-bold text-white mb-6">📊 Player Statistics</h2>
-        {loading ? (
-          <p className="text-white text-center">Loading stats from ESPN API...</p>
-        ) : playerStats.length === 0 ? (
-          <p className="text-gray-400 text-center py-8">No player stats available yet. Stats will update as matches are played.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="text-left py-3 px-4 text-yellow-400 font-semibold">Player</th>
-                  <th className="text-center py-3 px-4 text-yellow-400 font-semibold">Team</th>
-                  <th className="text-center py-3 px-4 text-green-400 font-semibold">Goals</th>
-                  <th className="text-center py-3 px-4 text-blue-400 font-semibold">Assists</th>
-                  <th className="text-center py-3 px-4 text-yellow-400 font-semibold">Yellow Cards</th>
-                  <th className="text-center py-3 px-4 text-red-400 font-semibold">Red Cards</th>
-                </tr>
-              </thead>
-              <tbody>
-                {playerStats.map((player) => (
-                  <tr key={player.id} className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
-                    <td className="py-3 px-4 text-white font-medium">{player.name}</td>
-                    <td className="py-3 px-4 text-center text-gray-300">{player.team}</td>
-                    <td className="py-3 px-4 text-center text-green-400 font-bold">{player.goals}</td>
-                    <td className="py-3 px-4 text-center text-blue-400 font-bold">{player.assists}</td>
-                    <td className="py-3 px-4 text-center text-yellow-400 font-bold">{player.yellowCards}</td>
-                    <td className="py-3 px-4 text-center text-red-400 font-bold">{player.redCards}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, onPrediction }: FifaWorldCupProps) {
+  // Add defensive checks
+  if (!currentPlayer) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-950 via-blue-950 to-red-950 flex items-center justify-center">
+        <div className="text-white text-center">
+          <h2 className="text-2xl font-bold mb-2">Loading...</h2>
+          <p className="text-gray-400">Please wait while we set up your experience</p>
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
 
-function StandingsSection() {
-  const [teamStats, setTeamStats] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-
-  // Initialize all 48 teams with zero stats (matching sampleGames IDs and flags)
-  const allTeams = [
-    { id: 'mx', name: 'Mexico', flag: '🇲🇽' },
-    { id: 'za', name: 'South Africa', flag: '🇿🇦' },
-    { id: 'kr', name: 'Korea Republic', flag: '🇰🇷' },
-    { id: 'cz', name: 'Czechia', flag: '🇨🇿' },
-    { id: 'ca', name: 'Canada', flag: '🇨🇦' },
-    { id: 'ba', name: 'Bosnia and Herzegovina', flag: '🇧🇦' },
-    { id: 'qa', name: 'Qatar', flag: '🇶🇦' },
-    { id: 'ch', name: 'Switzerland', flag: '🇨🇭' },
-    { id: 'ht', name: 'Haiti', flag: '🇭🇹' },
-    { id: 'gb-sct', name: 'Scotland', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' },
-    { id: 'br', name: 'Brazil', flag: '🇧🇷' },
-    { id: 'ma', name: 'Morocco', flag: '🇲🇦' },
-    { id: 'us', name: 'USA', flag: '🇺🇸' },
-    { id: 'py', name: 'Paraguay', flag: '🇵🇾' },
-    { id: 'au', name: 'Australia', flag: '🇦🇺' },
-    { id: 'tr', name: 'Türkiye', flag: '🇹🇷' },
-    { id: 'ci', name: 'Côte d\'Ivoire', flag: '🇨🇮' },
-    { id: 'ec', name: 'Ecuador', flag: '🇪🇨' },
-    { id: 'de', name: 'Germany', flag: '🇩🇪' },
-    { id: 'cw', name: 'Curaçao', flag: '🇨🇼' },
-    { id: 'nl', name: 'Netherlands', flag: '🇳🇱' },
-    { id: 'jp', name: 'Japan', flag: '🇯🇵' },
-    { id: 'se', name: 'Sweden', flag: '🇸🇪' },
-    { id: 'tn', name: 'Tunisia', flag: '🇹🇳' },
-    { id: 'ir', name: 'IR Iran', flag: '🇮🇷' },
-    { id: 'nz', name: 'New Zealand', flag: '🇳🇿' },
-    { id: 'be', name: 'Belgium', flag: '🇧🇪' },
-    { id: 'eg', name: 'Egypt', flag: '🇪🇬' },
-    { id: 'sa', name: 'Saudi Arabia', flag: '🇸🇦' },
-    { id: 'es', name: 'Spain', flag: '🇪🇸' },
-    { id: 'cv', name: 'Cabo Verde', flag: '🇨🇻' },
-    { id: 'uy', name: 'Uruguay', flag: '🇺🇾' },
-    { id: 'fr', name: 'France', flag: '🇫🇷' },
-    { id: 'sn', name: 'Senegal', flag: '🇸🇳' },
-    { id: 'iq', name: 'Iraq', flag: '🇮🇶' },
-    { id: 'no', name: 'Norway', flag: '🇳🇴' },
-    { id: 'ar', name: 'Argentina', flag: '🇦🇷' },
-    { id: 'dz', name: 'Algeria', flag: '🇩🇿' },
-    { id: 'at', name: 'Austria', flag: '🇦🇹' },
-    { id: 'jo', name: 'Jordan', flag: '🇯🇴' },
-    { id: 'gh', name: 'Ghana', flag: '��' },
-    { id: 'pa', name: 'Panama', flag: '��' },
-    { id: 'gb-eng', name: 'England', flag: '�󠁧󠁢󠁥󠁮󠁧󠁿' },
-    { id: 'hr', name: 'Croatia', flag: '��' },
-    { id: 'pt', name: 'Portugal', flag: '��' },
-    { id: 'uz', name: 'Uzbekistan', flag: '🇺�' },
-    { id: 'co', name: 'Colombia', flag: '��' },
-    { id: 'cd', name: 'Congo DR', flag: '��' },
-  ]
-
-  useEffect(() => {
-    // Calculate standings from actual game results
-    function calculateStandingsFromGames() {
-      const statsMap = new Map<string, any>()
-      
-      // Initialize all teams with zero stats
-      allTeams.forEach(team => {
-        statsMap.set(team.id, {
-          id: team.id,
-          name: team.name,
-          flag: team.flag,
-          gamesPlayed: 0,
-          wins: 0,
-          ties: 0,
-          losses: 0,
-          pointsFor: 0,
-          pointsAgainst: 0,
-          last5Games: [] as ('win' | 'tie' | 'loss')[]
-        })
-      })
-      
-      // Update stats based on finished games
-      sampleGames.forEach(game => {
-        if (game.status === 'finished' && game.actualResult) {
-          const homeStats = statsMap.get(game.homeTeam.id)
-          const awayStats = statsMap.get(game.awayTeam.id)
-          
-          if (homeStats && awayStats) {
-            homeStats.gamesPlayed++
-            awayStats.gamesPlayed++
-            
-            // Determine score based on actual result
-            let homeScore = 0
-            let awayScore = 0
-            
-            if (game.actualResult === 'home') {
-              homeScore = 1
-              awayScore = 0
-            } else if (game.actualResult === 'away') {
-              homeScore = 0
-              awayScore = 1
-            } else {
-              homeScore = 0
-              awayScore = 0
-            }
-            
-            homeStats.pointsFor += homeScore
-            homeStats.pointsAgainst += awayScore
-            awayStats.pointsFor += awayScore
-            awayStats.pointsAgainst += homeScore
-            
-            if (homeScore > awayScore) {
-              homeStats.wins++
-              awayStats.losses++
-            } else if (homeScore < awayScore) {
-              awayStats.wins++
-              homeStats.losses++
-            } else {
-              homeStats.ties++
-              awayStats.ties++
-            }
-            
-            // Only track last 3 games for group stage
-            if (game.group.startsWith('Group')) {
-              if (homeScore > awayScore) {
-                homeStats.last5Games.push('win')
-                awayStats.last5Games.push('loss')
-              } else if (homeScore < awayScore) {
-                awayStats.last5Games.push('win')
-                homeStats.last5Games.push('loss')
-              } else {
-                homeStats.last5Games.push('tie')
-                awayStats.last5Games.push('tie')
-              }
-              
-              // Keep only last 3 games
-              homeStats.last5Games = homeStats.last5Games.slice(-3)
-              awayStats.last5Games = awayStats.last5Games.slice(-3)
-            }
-          }
-        }
-      })
-      
-      return Array.from(statsMap.values())
-    }
-
-    setLoading(true)
-    const stats = calculateStandingsFromGames()
-    setTeamStats(stats)
-    setLoading(false)
-  }, [])
-
-  // Group the teams by their group
-  const groups = [
-    { name: 'Group A', teams: ['mx', 'za', 'kr', 'cz'] },
-    { name: 'Group B', teams: ['ca', 'ba', 'qa', 'ch'] },
-    { name: 'Group C', teams: ['ht', 'gb-sct', 'br', 'ma'] },
-    { name: 'Group D', teams: ['us', 'py', 'au', 'tr'] },
-    { name: 'Group E', teams: ['ci', 'ec', 'de', 'cw'] },
-    { name: 'Group F', teams: ['nl', 'jp', 'se', 'tn'] },
-    { name: 'Group G', teams: ['ir', 'nz', 'be', 'eg'] },
-    { name: 'Group H', teams: ['sa', 'es', 'cv', 'uy'] },
-    { name: 'Group I', teams: ['fr', 'sn', 'iq', 'no'] },
-    { name: 'Group J', teams: ['ar', 'dz', 'at', 'jo'] },
-    { name: 'Group K', teams: ['pt', 'uz', 'co', 'cd'] },
-    { name: 'Group L', teams: ['gh', 'gb-eng', 'pa', 'hr'] },
-  ]
-
-  return (
-    <div className="space-y-6">
-      <h2 className="text-3xl font-bold text-white mb-6">🏆 Group Standings</h2>
-      {loading ? (
-        <div className="bg-gradient-to-br from-green-950/80 via-blue-950/80 to-red-950/80 backdrop-blur-lg rounded-2xl p-6 border border-yellow-500/30 shadow-xl">
-          <p className="text-white text-center">Loading standings from ESPN API...</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 gap-8">
-          {groups.map((group) => {
-            const groupTeams = teamStats.filter(team => group.teams.includes(team.id))
-            // Sort by points (wins * 3 + ties), then by goal difference
-            const sortedTeams = [...groupTeams].sort((a, b) => {
-              const pointsA = a.wins * 3 + a.ties
-              const pointsB = b.wins * 3 + b.ties
-              if (pointsB !== pointsA) return pointsB - pointsA
-              const gdA = a.pointsFor - a.pointsAgainst
-              const gdB = b.pointsFor - b.pointsAgainst
-              return gdB - gdA
-            })
-
-            return (
-              <div key={group.name} className="bg-gradient-to-br from-green-950/80 via-blue-950/80 to-red-950/80 backdrop-blur-lg rounded-2xl p-6 border border-yellow-500/30 shadow-xl">
-                <h3 className="text-xl font-bold text-yellow-400 mb-4 whitespace-nowrap">{group.name}</h3>
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-gray-700">
-                      <th className="text-left py-2 px-2 text-gray-300 font-semibold w-8">#</th>
-                      <th className="text-left py-2 px-2 text-gray-300 font-semibold w-40">Team</th>
-                      <th className="text-center py-2 px-2 text-gray-300 font-semibold w-10">P</th>
-                      <th className="text-center py-2 px-2 text-gray-300 font-semibold w-10">W</th>
-                      <th className="text-center py-2 px-2 text-gray-300 font-semibold w-10">D</th>
-                      <th className="text-center py-2 px-2 text-gray-300 font-semibold w-10">L</th>
-                      <th className="text-center py-2 px-2 text-gray-300 font-semibold w-10">GF</th>
-                      <th className="text-center py-2 px-2 text-gray-300 font-semibold w-10">GA</th>
-                      <th className="text-center py-2 px-2 text-gray-300 font-semibold w-10">GD</th>
-                      <th className="text-center py-2 px-2 text-gray-300 font-semibold w-10">Pts</th>
-                      <th className="text-center py-2 px-2 text-gray-300 font-semibold w-32">Last 3</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortedTeams.map((team, index) => {
-                      const points = team.wins * 3 + team.ties
-                      const goalDiff = team.pointsFor - team.pointsAgainst
-                      return (
-                        <tr key={team.id} className={`border-b border-gray-800 hover:bg-gray-800/50 transition-colors ${index < 2 ? 'bg-green-500/10' : ''}`}>
-                          <td className="py-2 px-2 text-white font-bold w-8">{index + 1}</td>
-                          <td className="py-2 px-2 text-white font-medium whitespace-nowrap w-40">
-                            {team.name}
-                          </td>
-                          <td className="py-2 px-2 text-center text-gray-300 w-10">{team.gamesPlayed}</td>
-                          <td className="py-2 px-2 text-center text-green-400 font-bold w-10">{team.wins}</td>
-                          <td className="py-2 px-2 text-center text-blue-400 font-bold w-10">{team.ties}</td>
-                          <td className="py-2 px-2 text-center text-red-400 font-bold w-10">{team.losses}</td>
-                          <td className="py-2 px-2 text-center text-gray-300 w-10">{team.pointsFor}</td>
-                          <td className="py-2 px-2 text-center text-gray-300 w-10">{team.pointsAgainst}</td>
-                          <td className="py-2 px-2 text-center text-gray-300 w-10">{goalDiff > 0 ? `+${goalDiff}` : goalDiff}</td>
-                          <td className="py-2 px-2 text-center text-yellow-400 font-bold w-10">{points}</td>
-                          <td className="py-2 px-2 w-32">
-                            <div className="flex gap-1 justify-center">
-                              {team.last5Games.map((result: string, idx: number) => (
-                                <div
-                                  key={idx}
-                                  className={`w-5 h-5 rounded-full ${
-                                    result === 'win'
-                                      ? 'bg-green-500'
-                                      : result === 'tie'
-                                      ? 'bg-blue-500'
-                                      : 'bg-red-500'
-                                  }`}
-                                  title={result === 'win' ? 'Win' : result === 'tie' ? 'Tie' : 'Loss'}
-                                />
-                              ))}
-                            </div>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-                <div className="mt-3 text-xs text-gray-400">
-                  <span className="text-green-400">● Top 2 advance</span>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </div>
-  )
-}
-
-export default function FifaWorldCup() {
   const [games] = useState<Game[]>(sampleGames)
   const [predictions, setPredictions] = useState<Map<string, UserPrediction>>(new Map())
   const currentDate = new Date('2026-06-10T00:00:00')
@@ -1323,7 +1019,12 @@ export default function FifaWorldCup() {
   const [userPoints, setUserPoints] = useState(0)
   const [showRules, setShowRules] = useState(false)
   const [wagerAmount, setWagerAmount] = useState<Map<string, number>>(new Map())
-  const [activeTab, setActiveTab] = useState<TabType>('predictions')
+  const [showLeaderboard, setShowLeaderboard] = useState(true)
+
+  // Calculate leaderboard from all players
+  const leaderboard = allPlayers
+    .map(player => ({ username: player.username, points: player.points }))
+    .sort((a, b) => b.points - a.points)
 
   // Check if a game is available for prediction (day before until game start)
   const isGameAvailableForPrediction = (game: Game): boolean => {
@@ -1336,19 +1037,12 @@ export default function FifaWorldCup() {
       return false
     }
     
-    // Block all games on June 11, 2026
-    const june11 = new Date('2026-06-11T00:00:00')
-    const june12 = new Date('2026-06-12T00:00:00')
-    if (gameDate >= june11 && gameDate < june12) {
-      return false
-    }
-    
-    // Calculate the day before the game
+    // Calculate the day before the game at 12:00 AM EST
     const dayBefore = new Date(gameDate)
     dayBefore.setDate(dayBefore.getDate() - 1)
     dayBefore.setHours(0, 0, 0, 0)
     
-    // Available from day before at 00:00 until game start
+    // Available from day before at 00:00 until game kickoff
     return now >= dayBefore && now < gameDate && game.status === 'upcoming'
   }
 
@@ -1392,24 +1086,27 @@ export default function FifaWorldCup() {
   const handlePrediction = (gameId: string, prediction: PredictionType) => {
     const game = games.find(g => g.id === gameId)
     if (!game) return
-    
+
     const wager = isKnockoutRound(game) ? wagerAmount.get(gameId) || 0 : 0
-    
+
     const newPrediction: UserPrediction = {
       gameId,
       prediction,
       timestamp: new Date(),
       wager: wager > 0 ? wager : undefined
     }
-    
+
     const newPredictions = new Map(predictions)
     newPredictions.set(gameId, newPrediction)
     setPredictions(newPredictions)
-    
+
+    // Send prediction to server for persistence and sync
+    onPrediction(gameId, prediction)
+
     // Calculate points if game has result
     if (game.actualResult) {
       const points = calculatePoints(prediction, game.actualResult)
-      
+
       // Handle wager for knockout rounds
       if (wager > 0) {
         if (prediction === game.actualResult) {
@@ -1423,7 +1120,7 @@ export default function FifaWorldCup() {
         setUserPoints(prev => prev + points)
       }
     }
-    
+
     // Save to localStorage
     localStorage.setItem('fifaPredictions', JSON.stringify(Array.from(newPredictions.entries())))
   }
@@ -1512,7 +1209,7 @@ export default function FifaWorldCup() {
                 <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400">
                   FIFA World Cup 2026
                 </h1>
-                <p className="text-sm text-blue-300 font-medium">Tournament Prediction Challenge built by Bilal Iqbal</p>
+                <p className="text-sm text-blue-300 font-medium">World Cup Prediction Challenge</p>
               </div>
             </div>
             
@@ -1576,42 +1273,75 @@ export default function FifaWorldCup() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8">
-        {/* Navigation Tabs */}
-        <div className="flex gap-2 mb-8">
-          <button
-            onClick={() => setActiveTab('predictions')}
-            className={`px-6 py-3 rounded-lg font-bold transition-all ${
-              activeTab === 'predictions'
-                ? 'bg-gradient-to-r from-green-500 via-blue-500 to-red-500 text-white shadow-lg'
-                : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-700'
-            }`}
-          >
-            📅 Predictions
-          </button>
-          <button
-            onClick={() => setActiveTab('stats')}
-            className={`px-6 py-3 rounded-lg font-bold transition-all ${
-              activeTab === 'stats'
-                ? 'bg-gradient-to-r from-green-500 via-blue-500 to-red-500 text-white shadow-lg'
-                : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-700'
-            }`}
-          >
-            📊 Stats
-          </button>
-          <button
-            onClick={() => setActiveTab('standings')}
-            className={`px-6 py-3 rounded-lg font-bold transition-all ${
-              activeTab === 'standings'
-                ? 'bg-gradient-to-r from-green-500 via-blue-500 to-red-500 text-white shadow-lg'
-                : 'bg-gray-800/50 text-gray-300 hover:bg-gray-700/50 border border-gray-700'
-            }`}
-          >
-            🏆 Standings
-          </button>
+        {/* Betting Panel */}
+        <div className="bg-gradient-to-br from-purple-950/80 via-blue-950/80 to-red-950/80 backdrop-blur-lg rounded-2xl p-6 mb-8 border border-purple-500/30 shadow-xl">
+          <h2 className="text-2xl font-bold text-white mb-4">🎰 Predict the Winner</h2>
+          <p className="text-gray-400 mb-4">Select the team you think will win the entire tournament. If correct, you'll get <span className="text-green-400 font-semibold">+20 bonus points</span>!</p>
+          {!currentPlayer.betTeamName ? (
+            <select
+              onChange={(e) => {
+                const team = WORLD_CUP_TEAMS.find(t => t.id === e.target.value)
+                if (team) {
+                  onPlaceBet(team.id, team.name)
+                }
+              }}
+              className="w-full bg-gray-800 border-2 border-gray-700 rounded-xl px-4 py-3 text-white focus:border-purple-500 focus:outline-none transition-colors"
+            >
+              <option value="">Select a team...</option>
+              {WORLD_CUP_TEAMS.map((team) => (
+                <option key={team.id} value={team.id}>
+                  {team.name}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <div className="bg-green-500/20 border border-green-500/50 rounded-lg p-4">
+              <p className="text-green-400 font-semibold">Your Bet: {currentPlayer.betTeamName} (+20 if wins)</p>
+            </div>
+          )}
         </div>
 
-        {activeTab === 'predictions' && (
-          <>
+        {/* Leaderboard Panel */}
+        <div className="bg-gradient-to-br from-green-950/80 via-blue-950/80 to-red-950/80 backdrop-blur-lg rounded-2xl p-6 mb-8 border border-yellow-500/30 shadow-xl">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-2xl font-bold text-white">🏆 Leaderboard</h2>
+            <button
+              onClick={() => setShowLeaderboard(!showLeaderboard)}
+              className="text-gray-400 hover:text-white text-sm"
+            >
+              {showLeaderboard ? 'Hide' : 'Show'}
+            </button>
+          </div>
+          {showLeaderboard && (
+            <div className="space-y-2">
+              {leaderboard.map((player, index) => (
+                <div
+                  key={player.username}
+                  className={`flex items-center justify-between bg-gray-800/50 rounded-xl p-4 border-2 ${
+                    player.username === currentPlayer.username
+                      ? 'border-yellow-500/50'
+                      : 'border-gray-700/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`text-2xl font-bold ${
+                      index === 0 ? 'text-yellow-400' : index === 1 ? 'text-gray-300' : index === 2 ? 'text-orange-400' : 'text-gray-500'
+                    }`}>
+                      #{index + 1}
+                    </span>
+                    <span className={`text-lg font-semibold ${
+                      player.username === currentPlayer.username ? 'text-yellow-400' : 'text-white'
+                    }`}>
+                      {player.username}
+                    </span>
+                  </div>
+                  <span className="text-2xl font-bold text-green-400">{player.points} pts</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
             {/* Current Date Display */}
             <div className="bg-gradient-to-br from-green-950/80 via-blue-950/80 to-red-950/80 backdrop-blur-lg rounded-2xl p-6 mb-8 border border-yellow-500/30 shadow-xl">
           <div className="flex items-center justify-between">
@@ -1890,16 +1620,6 @@ export default function FifaWorldCup() {
             ))}
           </div>
         </div>
-          </>
-        )}
-
-        {activeTab === 'stats' && (
-          <StatsSection />
-        )}
-
-        {activeTab === 'standings' && (
-          <StandingsSection />
-        )}
       </main>
     </div>
   )

@@ -1,12 +1,36 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { v4 as uuidv4 } from 'uuid'
 
 interface WelcomeScreenProps {
-  onHost: (username: string) => void
-  onJoin: (username: string) => void
+  onEnterWithCode: (code: string, username: string) => void
 }
 
-export default function WelcomeScreen({ onHost, onJoin }: WelcomeScreenProps) {
+export default function WelcomeScreen({ onEnterWithCode }: WelcomeScreenProps) {
   const [username, setUsername] = useState('')
+  const [playerCode, setPlayerCode] = useState('')
+
+  useEffect(() => {
+    // Load username and player code from localStorage on mount
+    const storedUsername = localStorage.getItem('username')
+    const storedPlayerCode = localStorage.getItem('playerCode')
+    if (storedUsername) {
+      setUsername(storedUsername)
+    }
+    if (storedPlayerCode) {
+      setPlayerCode(storedPlayerCode)
+    }
+  }, [])
+
+  const handleGenerateCode = () => {
+    const newCode = uuidv4().substring(0, 8).toUpperCase()
+    setPlayerCode(newCode)
+  }
+
+  const handleEnter = () => {
+    if (username.trim() && playerCode.trim()) {
+      onEnterWithCode(playerCode.trim(), username.trim())
+    }
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-900 via-black to-green-900 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
@@ -79,46 +103,81 @@ export default function WelcomeScreen({ onHost, onJoin }: WelcomeScreenProps) {
           </div>
         </div>
 
-        {/* Username Input */}
+        {/* Username and Player Code Input */}
         <div className="bg-gray-900/80 backdrop-blur-lg rounded-3xl p-8 mb-8 border-2 border-green-500/30 shadow-2xl">
           <h2 className="text-3xl font-bold text-white mb-6 text-center">
-            👤 Enter Your Username
+            � Enter Your Details
           </h2>
-          <p className="text-gray-400 mb-4 text-center text-lg">
-            This username will be used across all leagues you join
+          <p className="text-gray-400 mb-6 text-center text-lg">
+            Enter your username and your unique player code to join the tournament
           </p>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Enter your username"
-            className="w-full bg-gray-800 border-2 border-gray-700 rounded-xl px-4 py-4 text-white text-lg focus:border-green-500 focus:outline-none transition-colors"
-            maxLength={20}
-          />
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-white text-lg mb-2">Username</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value)
+                  localStorage.setItem('username', e.target.value)
+                }}
+                placeholder="Enter your username"
+                className="w-full bg-gray-800 border-2 border-gray-700 rounded-xl px-4 py-4 text-white text-lg focus:border-green-500 focus:outline-none transition-colors"
+                maxLength={20}
+              />
+            </div>
+            
+            <div>
+              <label className="block text-white text-lg mb-2">Player Code</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={playerCode}
+                  onChange={(e) => {
+                    setPlayerCode(e.target.value.toUpperCase())
+                    localStorage.setItem('playerCode', e.target.value.toUpperCase())
+                  }}
+                  placeholder="Enter your 8-character code"
+                  className="flex-1 bg-gray-800 border-2 border-gray-700 rounded-xl px-4 py-4 text-white text-lg focus:border-green-500 focus:outline-none transition-colors uppercase"
+                  maxLength={8}
+                />
+                <button
+                  onClick={handleGenerateCode}
+                  className="bg-gray-700 hover:bg-gray-600 text-white px-6 py-4 rounded-xl text-lg font-semibold transition-colors"
+                >
+                  Generate
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-6 justify-center">
+        {/* Enter Button */}
+        <div className="flex justify-center">
           <button
-            onClick={() => username.trim() && onHost(username)}
-            disabled={!username.trim()}
-            className="flex-1 max-w-xs bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-2xl font-bold py-6 px-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-200 border-2 border-green-400/50 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={handleEnter}
+            disabled={!username.trim() || !playerCode.trim()}
+            className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-2xl font-bold py-6 px-12 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-200 border-2 border-green-400/50 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            🏠 Host a Tournament
-          </button>
-
-          <button
-            onClick={() => username.trim() && onJoin(username)}
-            disabled={!username.trim()}
-            className="flex-1 max-w-xs bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white text-2xl font-bold py-6 px-8 rounded-2xl shadow-lg transform hover:scale-105 transition-all duration-200 border-2 border-blue-400/50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            🎮 Join a Tournament
+            🎮 Enter Tournament
           </button>
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-8 text-gray-500 text-sm">
-          <p>Connect with players across different networks using the invite code system</p>
+        <div className="text-center mt-8 space-y-2">
+          <p className="text-gray-500 text-sm">
+            Connect with players across different networks using the invite code system
+          </p>
+          <button
+            onClick={() => {
+              localStorage.removeItem('playerId')
+              window.location.reload()
+            }}
+            className="text-gray-600 hover:text-gray-400 text-xs underline"
+          >
+            Reset Player ID (for testing multiple players)
+          </button>
         </div>
       </div>
     </div>
