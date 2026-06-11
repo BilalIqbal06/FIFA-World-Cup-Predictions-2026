@@ -19,21 +19,24 @@ export default function TournamentApp() {
     const storedScreen = localStorage.getItem('currentScreen') as ScreenType
 
     if (storedPlayerCode && storedUsername) {
+      console.log('🔄 Restoring session from localStorage:', { storedPlayerCode, storedUsername })
       setPlayerCode(storedPlayerCode)
       // Fetch player data from Supabase
       supabaseService.getPlayer(storedPlayerCode).then(data => {
         if (data) {
+          console.log('✅ Player restored from Supabase:', data)
           setCurrentPlayer(data)
           loadAllPlayers()
           setCurrentScreen(storedScreen || 'tournament')
         } else {
           // Player not found, go to welcome screen
+          console.warn('⚠️ Player not found in Supabase, clearing localStorage')
           localStorage.removeItem('playerCode')
           localStorage.removeItem('username')
           setCurrentScreen('welcome')
         }
       }).catch(err => {
-        console.error('Error fetching player:', err)
+        console.error('❌ Error fetching player:', err)
         setErrorMessage('Failed to load your data. Please try again.')
         setCurrentScreen('error')
       })

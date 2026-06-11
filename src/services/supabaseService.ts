@@ -3,9 +3,15 @@ import { createClient } from '@supabase/supabase-js'
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
+console.log('🔧 Supabase Config Check:')
+console.log('  VITE_SUPABASE_URL:', supabaseUrl ? '✅ Set' : '❌ Missing')
+console.log('  VITE_SUPABASE_ANON_KEY:', supabaseKey ? '✅ Set (length: ' + supabaseKey.length + ')' : '❌ Missing')
+
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase environment variables. Please check your .env file.')
+  console.error('❌ Missing Supabase environment variables. Please check your .env file or Vercel env vars.')
   // Don't throw error - allow app to load without Supabase for testing
+} else {
+  console.log('✅ Supabase client initialized')
 }
 
 export const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null
@@ -14,14 +20,16 @@ export const supabaseService = {
   // Get player by player code (using RPC function)
   async getPlayer(playerCode: string) {
     if (!supabase) {
-      console.warn('Supabase not configured, returning null player')
+      console.error('❌ Supabase not configured, returning null player')
       return null
     }
     
+    console.log('🔍 RPC: get_player called with code:', playerCode)
     const { data, error } = await supabase
       .rpc('get_player', { p_player_code: playerCode })
     
     if (error) {
+      console.error('❌ RPC get_player failed:', error)
       if (error.code === 'PGRST116') {
         return null // Player not found
       }
@@ -29,10 +37,12 @@ export const supabaseService = {
     }
     
     if (!data || data.length === 0) {
+      console.warn('⚠️ get_player returned no data')
       return null
     }
     
     const player = data[0]
+    console.log('✅ RPC get_player succeeded:', player)
     return {
       id: player.id,
       username: player.username,
@@ -45,7 +55,7 @@ export const supabaseService = {
   // Create new player (using RPC function)
   async createPlayer(playerCode: string, username: string) {
     if (!supabase) {
-      console.warn('Supabase not configured, returning mock player')
+      console.error('❌ Supabase not configured, returning mock player')
       return {
         id: 'mock-id',
         username: username,
@@ -55,19 +65,25 @@ export const supabaseService = {
       }
     }
     
+    console.log('🔍 RPC: create_player called with code:', playerCode, 'username:', username)
     const { data, error } = await supabase
       .rpc('create_player', { 
         p_player_code: playerCode, 
         p_username: username 
       })
     
-    if (error) throw error
+    if (error) {
+      console.error('❌ RPC create_player failed:', error)
+      throw error
+    }
     
     if (!data || data.length === 0) {
+      console.error('❌ create_player returned no data')
       throw new Error('Failed to create player')
     }
     
     const player = data[0]
+    console.log('✅ RPC create_player succeeded:', player)
     return {
       id: player.id,
       username: player.username,
@@ -102,7 +118,7 @@ export const supabaseService = {
   // Update winner pick (locked after first submission) - using RPC function
   async updateWinnerPick(playerCode: string, teamId: string, teamName: string) {
     if (!supabase) {
-      console.warn('Supabase not configured, returning mock player')
+      console.error('❌ Supabase not configured, returning mock player')
       return {
         id: 'mock-id',
         username: 'mock',
@@ -112,6 +128,7 @@ export const supabaseService = {
       }
     }
     
+    console.log('🔍 RPC: update_winner_pick called with code:', playerCode, 'team:', teamName)
     const { data, error } = await supabase
       .rpc('update_winner_pick', { 
         p_player_code: playerCode,
@@ -119,13 +136,18 @@ export const supabaseService = {
         p_team_name: teamName
       })
     
-    if (error) throw error
+    if (error) {
+      console.error('❌ RPC update_winner_pick failed:', error)
+      throw error
+    }
     
     if (!data || data.length === 0) {
+      console.error('❌ update_winner_pick returned no data')
       throw new Error('Failed to update winner pick')
     }
     
     const player = data[0]
+    console.log('✅ RPC update_winner_pick succeeded:', player)
     return {
       id: player.id,
       username: player.username,
@@ -138,10 +160,11 @@ export const supabaseService = {
   // Save prediction for a game (using RPC function)
   async savePrediction(playerCode: string, gameId: string, prediction: string, wager?: number) {
     if (!supabase) {
-      console.warn('Supabase not configured, skipping prediction save')
+      console.error('❌ Supabase not configured, skipping prediction save')
       return
     }
     
+    console.log('🔍 RPC: save_prediction called with code:', playerCode, 'game:', gameId, 'prediction:', prediction)
     const { error } = await supabase
       .rpc('save_prediction', { 
         p_player_code: playerCode,
@@ -150,21 +173,30 @@ export const supabaseService = {
         p_wager: wager || 0
       })
     
-    if (error) throw error
+    if (error) {
+      console.error('❌ RPC save_prediction failed:', error)
+      throw error
+    }
+    console.log('✅ RPC save_prediction succeeded')
   },
 
   // Get player's predictions (using RPC function)
   async getPlayerPredictions(playerCode: string) {
     if (!supabase) {
-      console.warn('Supabase not configured, returning empty predictions')
+      console.error('❌ Supabase not configured, returning empty predictions')
       return []
     }
     
+    console.log('🔍 RPC: get_player_predictions called with code:', playerCode)
     const { data, error } = await supabase
       .rpc('get_player_predictions', { p_player_code: playerCode })
     
-    if (error) throw error
+    if (error) {
+      console.error('❌ RPC get_player_predictions failed:', error)
+      throw error
+    }
     
+    console.log('✅ RPC get_player_predictions succeeded, returned', data?.length || 0, 'predictions')
     return data || []
   },
 
