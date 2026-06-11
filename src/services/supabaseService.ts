@@ -95,7 +95,7 @@ export const supabaseService = {
       id: player.username, // Use username as ID since view doesn't expose UUID
       username: player.username,
       points: player.points,
-      betTeamName: null // Winner picks are private, not exposed in view
+      betTeamName: undefined // Winner picks are private, not exposed in view
     }))
   },
 
