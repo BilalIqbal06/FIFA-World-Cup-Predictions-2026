@@ -1026,7 +1026,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
     .map(player => ({ username: player.username, points: player.points }))
     .sort((a, b) => b.points - a.points)
 
-  // Check if a game is available for prediction (day before until game start)
+  // Check if a game is available for prediction
   const isGameAvailableForPrediction = (game: Game): boolean => {
     const now = currentDate
     const gameDate = game.date
@@ -1037,7 +1037,12 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
       return false
     }
     
-    // Calculate the day before the game at 12:00 AM EST
+    // Group stage games: open immediately until kickoff
+    if (game.group && game.group.startsWith('Group')) {
+      return now < gameDate && game.status === 'upcoming'
+    }
+    
+    // Knockout stage games: day before rule
     const predictionOpenDate = new Date(gameDate)
     predictionOpenDate.setDate(predictionOpenDate.getDate() - 1)
     predictionOpenDate.setHours(0, 0, 0, 0)
