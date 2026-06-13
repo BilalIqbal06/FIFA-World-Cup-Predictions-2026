@@ -5,6 +5,52 @@ interface WelcomeScreenProps {
   onEnterWithCode: (code: string, username: string) => void
 }
 
+// Mobile responsive styles for WelcomeScreen
+const welcomeMobileStyles = `
+  html, body, #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+
+  @media (max-width: 768px) {
+    .welcome-screen .flex.gap-2 {
+      flex-direction: column !important;
+    }
+
+    .welcome-screen .flex.gap-2 button {
+      width: 100% !important;
+    }
+
+    .welcome-screen h1 {
+      font-size: 2.5rem !important;
+    }
+
+    .welcome-screen h2 {
+      font-size: 1.5rem !important;
+    }
+
+    .welcome-screen p {
+      font-size: 1rem !important;
+    }
+
+    .welcome-screen input {
+      font-size: 1rem !important;
+      padding: 0.75rem !important;
+    }
+
+    .welcome-screen button {
+      font-size: 1rem !important;
+      padding: 0.75rem !important;
+    }
+  }
+`
+
 export default function WelcomeScreen({ onEnterWithCode }: WelcomeScreenProps) {
   const [username, setUsername] = useState('')
   const [playerCode, setPlayerCode] = useState('')
@@ -21,6 +67,16 @@ export default function WelcomeScreen({ onEnterWithCode }: WelcomeScreenProps) {
     }
   }, [])
 
+  // Inject mobile styles
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = welcomeMobileStyles
+    document.head.appendChild(style)
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
+
   const handleGenerateCode = () => {
     const newCode = uuidv4().substring(0, 8).toUpperCase()
     setPlayerCode(newCode)
@@ -32,7 +88,7 @@ export default function WelcomeScreen({ onEnterWithCode }: WelcomeScreenProps) {
     }
   }
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-900 via-black to-green-900 flex items-center justify-center p-4">
+    <div className="welcome-screen min-h-screen bg-gradient-to-br from-green-900 via-black to-green-900 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
         {/* Header */}
         <div className="text-center mb-12">

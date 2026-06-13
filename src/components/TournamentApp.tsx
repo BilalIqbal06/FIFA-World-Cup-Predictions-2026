@@ -5,6 +5,53 @@ import FifaWorldCup from '../FifaWorldCup'
 import { supabaseService } from '../services/supabaseService'
 import type { Player, ScreenType } from '../types/tournament'
 
+// Mobile responsive styles for TournamentApp
+const tournamentMobileStyles = `
+  html, body, #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+
+  @media (max-width: 768px) {
+    .tournament-header .flex.items-center.justify-between {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .tournament-header .flex.items-center.gap-4 {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+      width: 100%;
+    }
+
+    .tournament-header button {
+      width: 100%;
+      white-space: normal;
+    }
+
+    .tournament-header h1 {
+      font-size: 1.25rem !important;
+    }
+
+    .tournament-header p {
+      font-size: 0.875rem !important;
+    }
+
+    .tournament-header .bg-yellow-500\\/20 {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+`
+
 export default function TournamentApp() {
   const [currentScreen, setCurrentScreen] = useState<ScreenType>('welcome')
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null)
@@ -57,6 +104,16 @@ export default function TournamentApp() {
       fetchPlayerWithRetry()
     } else {
       setIsLoading(false)
+    }
+  }, [])
+
+  // Inject mobile styles
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = tournamentMobileStyles
+    document.head.appendChild(style)
+    return () => {
+      document.head.removeChild(style)
     }
   }, [])
 
@@ -223,7 +280,7 @@ export default function TournamentApp() {
     return (
       <div>
         {/* Tournament Header */}
-        <div className="bg-gradient-to-r from-green-950 via-blue-950 to-red-950 border-b border-yellow-500/30 py-4 px-6">
+        <div className="tournament-header bg-gradient-to-r from-green-950 via-blue-950 to-red-950 border-b border-yellow-500/30 py-4 px-6">
           <div className="max-w-7xl mx-auto flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-white">FIFA World Cup 2026</h1>

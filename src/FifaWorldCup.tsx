@@ -249,6 +249,40 @@ const mobileStyles = `
       font-weight: bold;
       margin-bottom: 0.25rem;
     }
+
+    /* Complete Tournament Schedule - stack vertically */
+    .schedule-row {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 0.5rem !important;
+    }
+
+    .schedule-row .flex.items-center.gap-4 {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 0.25rem !important;
+      width: 100%;
+    }
+
+    .schedule-row .flex.items-center.gap-4:last-child {
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      align-items: center !important;
+      gap: 0.5rem !important;
+    }
+
+    .schedule-row img {
+      width: 1.5rem !important;
+      height: 1.125rem !important;
+    }
+
+    .schedule-row .text-white.font-bold {
+      font-size: 0.875rem !important;
+    }
+
+    .schedule-row .text-yellow-400.font-bold {
+      font-size: 0.75rem !important;
+    }
   }
 
   /* Small mobile - 480px and below */
@@ -1507,7 +1541,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/50 rounded-lg px-4 py-2">
                 <span className="text-sm text-yellow-200">Your Points:</span>
-                <span className="text-2xl font-bold text-yellow-400">{userPoints}</span>
+                <span className="text-2xl font-bold text-yellow-400">{currentPlayer.points}</span>
               </div>
               <button
                 onClick={() => setShowRules(!showRules)}
@@ -1853,7 +1887,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
                     return (
                       <div
                         key={game.id}
-                        className={`bg-gradient-to-r from-green-950/80 via-blue-950/80 to-red-950/80 rounded-xl p-4 border transition-all ${
+                        className={`schedule-row bg-gradient-to-r from-green-950/80 via-blue-950/80 to-red-950/80 rounded-xl p-4 border transition-all ${
                           existingPrediction ? 'border-yellow-500/50' : 'border-gray-700'
                         }`}
                       >
