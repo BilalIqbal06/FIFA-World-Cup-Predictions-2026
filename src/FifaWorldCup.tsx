@@ -2,6 +2,228 @@ import { useState, useEffect } from 'react'
 import type { Player } from './types/tournament'
 import { WORLD_CUP_TEAMS } from './types/tournament'
 
+// Mobile responsive styles
+const mobileStyles = `
+  /* Base styles to prevent horizontal overflow */
+  html, body, #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+
+  /* Mobile styles - 768px and below */
+  @media (max-width: 768px) {
+    /* Header stack vertically */
+    header .flex.items-center.justify-between {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    header .flex.items-center.gap-4 {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    header .flex.items-center.justify-between > div:last-child {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    header .flex.items-center.gap-2 {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    /* Reduce header font sizes */
+    header h1 {
+      font-size: 1.5rem !important;
+    }
+
+    header p {
+      font-size: 0.875rem !important;
+    }
+
+    /* Logo size */
+    header img, header svg {
+      width: 3rem !important;
+      height: 3rem !important;
+    }
+
+    /* Main content padding */
+    main {
+      padding-left: 1rem !important;
+      padding-right: 1rem !important;
+    }
+
+    /* Panel padding */
+    .rounded-2xl {
+      padding: 1rem !important;
+    }
+
+    /* Match cards - stack vertically */
+    .grid-cols-2 {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Match card internal layout */
+    .match-card .flex.items-center.justify-between {
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+
+    .match-card .flex.items-center.justify-between > div:last-child {
+      width: 100%;
+    }
+
+    /* Team display in match cards */
+    .match-card .flex.items-center.justify-between.mb-6 {
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .match-card .text-center.flex-1 {
+      width: 100%;
+    }
+
+    .match-card .text-center.px-4 {
+      width: 100%;
+      padding: 0.5rem !important;
+    }
+
+    /* Prediction buttons - full width */
+    .match-card .grid-cols-3 {
+      grid-template-columns: 1fr !important;
+      gap: 0.5rem !important;
+    }
+
+    .match-card button {
+      width: 100%;
+      padding: 0.75rem !important;
+      font-size: 0.875rem !important;
+    }
+
+    /* Leaderboard rows */
+    .leaderboard-row {
+      flex-direction: column;
+      align-items: flex-start !important;
+      gap: 0.5rem;
+    }
+
+    .leaderboard-row > div:last-child {
+      width: 100%;
+      text-align: right;
+    }
+
+    /* Date navigation buttons */
+    .flex.gap-2.flex-wrap button {
+      flex: 1 1 auto;
+      min-width: 80px;
+      font-size: 0.875rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    /* Heading sizes */
+    h2 {
+      font-size: 1.25rem !important;
+    }
+
+    h3 {
+      font-size: 1rem !important;
+    }
+
+    /* Rules modal */
+    .fixed.inset-0 > div {
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 1rem !important;
+    }
+
+    /* Betting panel */
+    select {
+      font-size: 1rem !important;
+    }
+
+    /* Wager input */
+    input[type="number"] {
+      font-size: 1rem !important;
+    }
+
+    /* Status badges */
+    .px-2.py-1, .px-3.py-1 {
+      font-size: 0.75rem !important;
+      padding: 0.25rem 0.5rem !important;
+    }
+
+    /* Team names in match cards */
+    .text-lg {
+      font-size: 0.875rem !important;
+    }
+
+    /* Time display */
+    .text-xl {
+      font-size: 1rem !important;
+    }
+
+    /* Flag images */
+    img.w-16 {
+      width: 2.5rem !important;
+      height: 1.875rem !important;
+    }
+  }
+
+  /* Small mobile - 480px and below */
+  @media (max-width: 480px) {
+    /* Further reduce header */
+    header h1 {
+      font-size: 1.25rem !important;
+    }
+
+    header p {
+      font-size: 0.75rem !important;
+    }
+
+    /* Further reduce padding */
+    main {
+      padding-left: 0.75rem !important;
+      padding-right: 0.75rem !important;
+    }
+
+    .rounded-2xl {
+      padding: 0.75rem !important;
+    }
+
+    /* Even smaller buttons */
+    button {
+      font-size: 0.8125rem !important;
+      padding: 0.625rem !important;
+    }
+
+    /* Team names */
+    .text-lg {
+      font-size: 0.8125rem !important;
+    }
+
+    /* Date display */
+    .text-3xl {
+      font-size: 1.5rem !important;
+    }
+
+    /* Points display */
+    .text-2xl {
+      font-size: 1.25rem !important;
+    }
+  }
+`
+
 type GameStatus = 'upcoming' | 'live' | 'finished'
 type PredictionType = 'home' | 'away' | 'tie'
 
@@ -987,6 +1209,16 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
   const [wagerAmount, setWagerAmount] = useState<Map<string, number>>(new Map())
   const [showLeaderboard, setShowLeaderboard] = useState(true)
 
+  // Inject mobile styles
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = mobileStyles
+    document.head.appendChild(style)
+    return () => {
+      document.head.removeChild(style)
+    }
+  }, [])
+
   // Calculate leaderboard from all players
   const leaderboard = allPlayers
     .map(player => ({ username: player.username, points: player.points }))
@@ -1288,7 +1520,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
               {leaderboard.map((player, index) => (
                 <div
                   key={player.username}
-                  className={`flex items-center justify-between bg-gray-800/50 rounded-xl p-4 border-2 ${
+                  className={`leaderboard-row flex items-center justify-between bg-gray-800/50 rounded-xl p-4 border-2 ${
                     player.username === currentPlayer.username
                       ? 'border-yellow-500/50'
                       : 'border-gray-700/50'
@@ -1372,7 +1604,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
                 return (
                   <div
                     key={game.id}
-                    className={`bg-gradient-to-br from-green-950/80 via-blue-950/80 to-red-950/80 backdrop-blur-lg rounded-2xl p-6 border-2 transition-all shadow-xl ${
+                    className={`match-card bg-gradient-to-br from-green-950/80 via-blue-950/80 to-red-950/80 backdrop-blur-lg rounded-2xl p-6 border-2 transition-all shadow-xl ${
                       existingPrediction ? 'border-yellow-500/50 shadow-yellow-500/20' : 'border-gray-700'
                     }`}
                   >
