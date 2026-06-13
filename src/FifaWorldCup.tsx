@@ -35,37 +35,50 @@ const mobileStyles = `
       width: 100%;
       flex-direction: column;
       align-items: stretch;
+      gap: 0.75rem;
     }
 
     header .flex.items-center.gap-2 {
       width: 100%;
+      flex-wrap: wrap;
       justify-content: space-between;
+    }
+
+    /* Header buttons - full width on mobile */
+    header button {
+      width: 100%;
+      white-space: normal;
+      text-align: center;
     }
 
     /* Reduce header font sizes */
     header h1 {
-      font-size: 1.5rem !important;
+      font-size: 1.25rem !important;
+      line-height: 1.2;
     }
 
     header p {
-      font-size: 0.875rem !important;
+      font-size: 0.75rem !important;
     }
 
     /* Logo size */
     header img, header svg {
-      width: 3rem !important;
-      height: 3rem !important;
+      width: 2.5rem !important;
+      height: 2.5rem !important;
     }
 
     /* Main content padding */
     main {
-      padding-left: 1rem !important;
-      padding-right: 1rem !important;
+      padding-left: 0.75rem !important;
+      padding-right: 0.75rem !important;
     }
 
     /* Panel padding */
     .rounded-2xl {
-      padding: 1rem !important;
+      padding: 0.75rem !important;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     /* Match cards - stack vertically */
@@ -73,30 +86,88 @@ const mobileStyles = `
       grid-template-columns: 1fr !important;
     }
 
-    /* Match card internal layout */
-    .match-card .flex.items-center.justify-between {
-      flex-direction: column;
-      gap: 0.5rem;
-      align-items: flex-start;
+    /* Match card container */
+    .match-card {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+      padding: 0.75rem !important;
     }
 
-    .match-card .flex.items-center.justify-between > div:last-child {
+    /* Match card header (venue, group, status) */
+    .match-card > div:first-child {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 0.5rem !important;
+    }
+
+    .match-card > div:first-child > div:first-child {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 0.25rem !important;
       width: 100%;
     }
 
-    /* Team display in match cards */
-    .match-card .flex.items-center.justify-between.mb-6 {
-      flex-direction: column;
-      gap: 1rem;
+    .match-card > div:first-child > div:last-child {
+      width: 100%;
+      text-align: left;
     }
 
+    /* Team display - stack vertically */
+    .match-card .flex.items-center.justify-between.mb-6 {
+      flex-direction: column !important;
+      gap: 0.75rem !important;
+      align-items: center !important;
+    }
+
+    /* Individual team sections */
     .match-card .text-center.flex-1 {
       width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
     }
 
+    /* Time/VS section */
     .match-card .text-center.px-4 {
       width: 100%;
-      padding: 0.5rem !important;
+      padding: 0.5rem 0 !important;
+      background: rgba(59, 130, 246, 0.1);
+      border-radius: 0.5rem;
+      margin: 0.25rem 0;
+    }
+
+    /* Team names - smaller font */
+    .match-card .text-lg {
+      font-size: 0.875rem !important;
+      line-height: 1.2;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    /* Time display */
+    .match-card .text-xl {
+      font-size: 1rem !important;
+    }
+
+    .match-card .text-sm {
+      font-size: 0.75rem !important;
+    }
+
+    /* Flag images */
+    .match-card img.w-16 {
+      width: 2rem !important;
+      height: 1.5rem !important;
+    }
+
+    /* Status badges - no absolute positioning */
+    .match-card .px-2.py-1,
+    .match-card .px-3.py-1 {
+      position: static !important;
+      font-size: 0.7rem !important;
+      padding: 0.25rem 0.5rem !important;
+      white-space: normal;
     }
 
     /* Prediction buttons - full width */
@@ -107,8 +178,10 @@ const mobileStyles = `
 
     .match-card button {
       width: 100%;
-      padding: 0.75rem !important;
-      font-size: 0.875rem !important;
+      padding: 0.625rem !important;
+      font-size: 0.8125rem !important;
+      white-space: normal;
+      line-height: 1.2;
     }
 
     /* Leaderboard rows */
@@ -126,57 +199,55 @@ const mobileStyles = `
     /* Date navigation buttons */
     .flex.gap-2.flex-wrap button {
       flex: 1 1 auto;
-      min-width: 80px;
-      font-size: 0.875rem;
-      padding: 0.5rem 0.75rem;
+      min-width: 70px;
+      font-size: 0.75rem;
+      padding: 0.5rem 0.5rem;
+      white-space: nowrap;
     }
 
     /* Heading sizes */
     h2 {
-      font-size: 1.25rem !important;
+      font-size: 1.125rem !important;
+      line-height: 1.2;
     }
 
     h3 {
-      font-size: 1rem !important;
+      font-size: 0.9375rem !important;
+      line-height: 1.2;
     }
 
     /* Rules modal */
     .fixed.inset-0 > div {
       max-height: 90vh;
       overflow-y: auto;
-      padding: 1rem !important;
+      padding: 0.75rem !important;
     }
 
     /* Betting panel */
     select {
-      font-size: 1rem !important;
+      font-size: 0.875rem !important;
+      padding: 0.625rem !important;
     }
 
     /* Wager input */
     input[type="number"] {
-      font-size: 1rem !important;
-    }
-
-    /* Status badges */
-    .px-2.py-1, .px-3.py-1 {
-      font-size: 0.75rem !important;
-      padding: 0.25rem 0.5rem !important;
-    }
-
-    /* Team names in match cards */
-    .text-lg {
       font-size: 0.875rem !important;
+      padding: 0.5rem !important;
     }
 
-    /* Time display */
-    .text-xl {
-      font-size: 1rem !important;
+    /* Points display in header */
+    header .text-2xl {
+      font-size: 1.25rem !important;
     }
 
-    /* Flag images */
-    img.w-16 {
-      width: 2.5rem !important;
-      height: 1.875rem !important;
+    /* VS label between teams */
+    .match-card .text-center.px-4::before {
+      content: "VS";
+      display: block;
+      font-size: 0.75rem;
+      color: #fbbf24;
+      font-weight: bold;
+      margin-bottom: 0.25rem;
     }
   }
 
@@ -184,42 +255,59 @@ const mobileStyles = `
   @media (max-width: 480px) {
     /* Further reduce header */
     header h1 {
-      font-size: 1.25rem !important;
+      font-size: 1.125rem !important;
     }
 
     header p {
-      font-size: 0.75rem !important;
+      font-size: 0.6875rem !important;
     }
 
     /* Further reduce padding */
     main {
-      padding-left: 0.75rem !important;
-      padding-right: 0.75rem !important;
+      padding-left: 0.5rem !important;
+      padding-right: 0.5rem !important;
     }
 
     .rounded-2xl {
-      padding: 0.75rem !important;
+      padding: 0.5rem !important;
+    }
+
+    .match-card {
+      padding: 0.5rem !important;
     }
 
     /* Even smaller buttons */
     button {
-      font-size: 0.8125rem !important;
-      padding: 0.625rem !important;
+      font-size: 0.75rem !important;
+      padding: 0.5rem !important;
     }
 
     /* Team names */
-    .text-lg {
-      font-size: 0.8125rem !important;
+    .match-card .text-lg {
+      font-size: 0.75rem !important;
     }
 
     /* Date display */
     .text-3xl {
-      font-size: 1.5rem !important;
+      font-size: 1.25rem !important;
     }
 
     /* Points display */
     .text-2xl {
-      font-size: 1.25rem !important;
+      font-size: 1.125rem !important;
+    }
+
+    /* Flags */
+    .match-card img.w-16 {
+      width: 1.75rem !important;
+      height: 1.3125rem !important;
+    }
+
+    /* Status badges */
+    .match-card .px-2.py-1,
+    .match-card .px-3.py-1 {
+      font-size: 0.625rem !important;
+      padding: 0.1875rem 0.375rem !important;
     }
   }
 `
