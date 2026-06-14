@@ -860,6 +860,24 @@ const sampleGames: Game[] = [
     status: 'upcoming'
   },
   {
+    id: '105',
+    homeTeam: { id: 'gb-sct', name: 'Scotland', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' },
+    awayTeam: { id: 'br', name: 'Brazil', flag: '🇧🇷' },
+    date: new Date('2026-06-24T18:00:00-04:00'),
+    venue: 'New York/New Jersey',
+    group: 'Group C',
+    status: 'upcoming'
+  },
+  {
+    id: '106',
+    homeTeam: { id: 'ma', name: 'Morocco', flag: '🇲🇦' },
+    awayTeam: { id: 'ht', name: 'Haiti', flag: '🇭🇹' },
+    date: new Date('2026-06-24T18:00:00-04:00'),
+    venue: 'New York/New Jersey',
+    group: 'Group C',
+    status: 'upcoming'
+  },
+  {
     id: '53',
     homeTeam: { id: 'cw', name: 'Curaçao', flag: '🇨🇼' },
     awayTeam: { id: 'ci', name: 'Ivory Coast', flag: '🇨🇮' },
@@ -912,6 +930,24 @@ const sampleGames: Game[] = [
     date: new Date('2026-06-26T23:00:00-04:00'),
     venue: 'Vancouver',
     group: 'Group G',
+    status: 'upcoming'
+  },
+  {
+    id: '107',
+    homeTeam: { id: 'tr', name: 'Turkey', flag: '🇹🇷' },
+    awayTeam: { id: 'us', name: 'USA', flag: '🇺🇸' },
+    date: new Date('2026-06-25T22:00:00-04:00'),
+    venue: 'New York/New Jersey',
+    group: 'Group D',
+    status: 'upcoming'
+  },
+  {
+    id: '108',
+    homeTeam: { id: 'py', name: 'Paraguay', flag: '🇵🇾' },
+    awayTeam: { id: 'au', name: 'Australia', flag: '🇦🇺' },
+    date: new Date('2026-06-25T22:00:00-04:00'),
+    venue: 'New York/New Jersey',
+    group: 'Group D',
     status: 'upcoming'
   },
   {
