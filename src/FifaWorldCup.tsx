@@ -1373,16 +1373,18 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
 
   // Check if predictions are open for a specific date
   const getAvailableGamesForDate = (date: Date): Game[] => {
-    return games.filter(game => {
-      const gameDate = new Date(game.date)
-      gameDate.setHours(0, 0, 0, 0)
-      
-      const checkDate = new Date(date)
-      checkDate.setHours(0, 0, 0, 0)
-      
-      // Show games on the selected date
-      return gameDate.getTime() === checkDate.getTime()
-    })
+    return games
+      .filter(game => {
+        const gameDate = new Date(game.date)
+        gameDate.setHours(0, 0, 0, 0)
+        
+        const checkDate = new Date(date)
+        checkDate.setHours(0, 0, 0, 0)
+        
+        // Show games on the selected date
+        return gameDate.getTime() === checkDate.getTime()
+      })
+      .sort((a, b) => a.date.getTime() - b.date.getTime())
   }
 
   // Calculate points based on prediction and actual result
@@ -1490,6 +1492,11 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
     acc[dateKey].push(game)
     return acc
   }, {} as Record<string, Game[]>)
+
+  // Sort games within each date by kickoff time
+  Object.keys(gamesByDate).forEach(dateKey => {
+    gamesByDate[dateKey].sort((a, b) => a.date.getTime() - b.date.getTime())
+  })
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-green-900 via-blue-900 to-red-950">
