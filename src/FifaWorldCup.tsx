@@ -1775,6 +1775,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
+                        <span className="text-xs text-gray-500 font-mono">Game ID: {game.id.padStart(2, '0')}</span>
                         <span className="text-sm text-blue-300">{game.venue}</span>
                         <span className={`px-2 py-1 rounded text-xs font-medium ${
                           game.group.startsWith('Group') ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'
@@ -1936,6 +1937,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4">
+                            <span className="text-xs text-gray-500 font-mono">Game ID: {game.id.padStart(2, '0')}</span>
                             <img 
                               src={`https://flagcdn.com/w40/${game.homeTeam.id}.png`} 
                               alt={game.homeTeam.name}
