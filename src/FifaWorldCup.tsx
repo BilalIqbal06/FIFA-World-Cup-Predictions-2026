@@ -1479,11 +1479,11 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
 
   // Format time for display
   const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
       minute: '2-digit',
       timeZone: 'America/New_York'
-    }) + ' EST'
+    }) + ' ET'
   }
 
   // Get games for selected date
