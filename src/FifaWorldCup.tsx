@@ -1360,6 +1360,14 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
   const [wagerAmount, setWagerAmount] = useState<Map<string, number>>(new Map())
   const [showLeaderboard, setShowLeaderboard] = useState(true)
 
+  const getFlagCode = (id: string): string => {
+  switch (id) {
+    case 'en':
+      return 'gb-eng'
+    default:
+      return id
+  }
+}
   // Inject mobile styles
   useEffect(() => {
     const style = document.createElement('style')
@@ -1763,7 +1771,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
                     <div className="flex items-center justify-between mb-6">
                       <div className="text-center flex-1">
                         <img 
-                          src={`https://flagcdn.com/w80/${game.homeTeam.id}.png`} 
+                          src={`https://flagcdn.com/w80/${getFlagCode(game.homeTeam.id)}.png`} 
                           alt={game.homeTeam.name}
                           className="w-16 h-12 object-cover rounded-lg mx-auto mb-2 shadow-lg"
                           onError={(e) => {
@@ -1782,7 +1790,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
                       
                       <div className="text-center flex-1">
                         <img 
-                          src={`https://flagcdn.com/w80/${game.awayTeam.id}.png`} 
+                          src={`https://flagcdn.com/w80/${getFlagCode(game.awayTeam.id)}.png`}
                           alt={game.awayTeam.name}
                           className="w-16 h-12 object-cover rounded-lg mx-auto mb-2 shadow-lg"
                           onError={(e) => {
@@ -1909,7 +1917,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
                           <div className="flex items-center gap-4">
                             <span className="text-sm text-yellow-300 font-bold font-mono">Game ID: {game.id.padStart(2, '0')}</span>
                             <img 
-                              src={`https://flagcdn.com/w40/${game.homeTeam.id}.png`} 
+                              src={`https://flagcdn.com/w40/${getFlagCode(game.homeTeam.id)}.png`}
                               alt={game.homeTeam.name}
                               className="w-8 h-6 object-cover rounded shadow"
                               onError={(e) => {
@@ -1922,7 +1930,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
                             <span className="text-yellow-400 font-bold px-2">vs</span>
                             <span className="text-white font-bold">{game.awayTeam.name}</span>
                             <img 
-                              src={`https://flagcdn.com/w40/${game.awayTeam.id}.png`} 
+                              src={`https://flagcdn.com/w40/${getFlagCode(game.awayTeam.id)}.png`}
                               alt={game.awayTeam.name}
                               className="w-8 h-6 object-cover rounded shadow"
                               onError={(e) => {
