@@ -366,13 +366,6 @@ interface Game {
   actualResult?: PredictionType
 }
 
-interface UserPrediction {
-  gameId: string
-  prediction: PredictionType
-  timestamp: Date
-  wager?: number
-}
-
 // Official FIFA World Cup 2026 Schedule (June 11 - July 19, 2026)
 // All times in Eastern Time (ET/EDT, UTC-4)
 // Source: openfootball/worldcup.json (official FIFA schedule)
@@ -1341,11 +1334,12 @@ const sampleGames: Game[] = [
 interface FifaWorldCupProps {
   currentPlayer: Player
   allPlayers: Player[]
+  predictions: Map<string, any>
   onPlaceBet: (teamId: string, teamName: string) => void
   onPrediction: (gameId: string, prediction: string, wager?: number) => Promise<void>
 }
 
-export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, onPrediction }: FifaWorldCupProps) {
+export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, onPlaceBet, onPrediction }: FifaWorldCupProps) {
   // Add defensive checks
   if (!currentPlayer) {
     return (
@@ -1359,7 +1353,6 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
   }
 
   const [games] = useState<Game[]>(sampleGames)
-  const [predictions, setPredictions] = useState<Map<string, UserPrediction>>(new Map())
   const currentDate = new Date()
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [userPoints, setUserPoints] = useState(0)
@@ -1452,19 +1445,8 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
 
     const wager = isKnockoutRound(game) ? wagerAmount.get(gameId) || 0 : 0
 
-    const newPrediction: UserPrediction = {
-      gameId,
-      prediction,
-      timestamp: new Date(),
-      wager: wager > 0 ? wager : undefined
-    }
-
-    const newPredictions = new Map(predictions)
-    newPredictions.set(gameId, newPrediction)
-    setPredictions(newPredictions)
-
     // Send prediction to server for persistence and sync
-    onPrediction(gameId, prediction)
+    onPrediction(gameId, prediction, wager)
 
     // Calculate points if game has result
     if (game.actualResult) {
@@ -1483,19 +1465,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, onPlaceBet, on
         setUserPoints(prev => prev + points)
       }
     }
-
-    // Save to localStorage
-    localStorage.setItem('fifaPredictions', JSON.stringify(Array.from(newPredictions.entries())))
   }
-
-  // Load predictions from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('fifaPredictions')
-    if (saved) {
-      const parsed = JSON.parse(saved)
-      setPredictions(new Map(parsed))
-    }
-  }, [])
 
   // Format date for display
   const formatDate = (date: Date): string => {

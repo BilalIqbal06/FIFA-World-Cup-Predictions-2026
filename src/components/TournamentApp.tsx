@@ -59,6 +59,7 @@ export default function TournamentApp() {
   const [allPlayers, setAllPlayers] = useState<Player[]>([])
   const [errorMessage, setErrorMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const [predictions, setPredictions] = useState<Map<string, any>>(new Map())
 
   // Load persisted state on mount with retry logic
   useEffect(() => {
@@ -78,6 +79,7 @@ export default function TournamentApp() {
             console.log('✅ Player restored from Supabase:', data)
             setCurrentPlayer(data)
             loadAllPlayers()
+            loadPredictions()
             setCurrentScreen(storedScreen || 'tournament')
           } else {
             // Player not found, go to welcome screen
@@ -124,6 +126,27 @@ export default function TournamentApp() {
     }).catch(err => console.error('Error loading players:', err))
   }
 
+  // Load predictions from Supabase
+  const loadPredictions = async () => {
+    if (!playerCode) return
+    try {
+      const predictionsData = await supabaseService.getPlayerPredictions(playerCode)
+      const predictionsMap = new Map()
+      predictionsData.forEach((pred: any) => {
+        predictionsMap.set(pred.game_id, {
+          gameId: pred.game_id,
+          prediction: pred.prediction,
+          timestamp: new Date(pred.created_at),
+          wager: pred.wager
+        })
+      })
+      setPredictions(predictionsMap)
+      console.log('✅ Loaded', predictionsMap.size, 'predictions from Supabase')
+    } catch (err) {
+      console.error('Error loading predictions:', err)
+    }
+  }
+
   // Subscribe to real-time leaderboard updates
   useEffect(() => {
     if (currentScreen === 'tournament') {
@@ -155,6 +178,7 @@ export default function TournamentApp() {
       
       setCurrentPlayer(player)
       loadAllPlayers()
+      loadPredictions()
       setCurrentScreen('tournament')
       localStorage.setItem('currentScreen', 'tournament')
     } catch (err) {
@@ -191,10 +215,11 @@ export default function TournamentApp() {
   // Handle prediction
   const handlePrediction = async (gameId: string, prediction: string, wager?: number) => {
     if (!currentPlayer) return
-    
+
     try {
       await supabaseService.savePrediction(playerCode, gameId, prediction, wager)
       loadAllPlayers()
+      loadPredictions()
     } catch (err) {
       console.error('Error saving prediction:', err)
     }
@@ -223,6 +248,7 @@ export default function TournamentApp() {
             console.log('✅ Player restored from Supabase (retry):', data)
             setCurrentPlayer(data)
             loadAllPlayers()
+            loadPredictions()
             setCurrentScreen(storedScreen || 'tournament')
           } else {
             console.warn('⚠️ Player not found in Supabase (retry), clearing localStorage')
@@ -307,9 +333,10 @@ export default function TournamentApp() {
           </div>
         </div>
 
-        <FifaWorldCup 
-          currentPlayer={currentPlayer} 
+        <FifaWorldCup
+          currentPlayer={currentPlayer}
           allPlayers={allPlayers}
+          predictions={predictions}
           onPlaceBet={handlePlaceBet}
           onPrediction={(gameId, prediction, wager) => handlePrediction(gameId, prediction, wager)}
         />
