@@ -79,11 +79,11 @@ export default function TournamentApp() {
           if (data) {
             console.log('✅ Player restored from Supabase:', data)
             console.log('🔍 Player id:', data.id)
-            console.log('🔍 Using player id for predictions:', data.id)
+            console.log('🔍 Using player code for predictions:', storedPlayerCode)
             setCurrentPlayer(data)
-            setPlayerCode(data.id)
+            setPlayerCode(storedPlayerCode)
             loadAllPlayers()
-            loadPredictions()
+            loadPredictions(storedPlayerCode)
             setCurrentScreen(storedScreen || 'tournament')
           } else {
             // Player not found, go to welcome screen
@@ -131,17 +131,17 @@ export default function TournamentApp() {
   }
 
   // Load predictions from Supabase
-  const loadPredictions = async () => {
-    console.log('🔍 loadPredictions called with playerCode:', playerCode)
-    if (!playerCode) {
-      console.log('⚠️ loadPredictions: no playerCode, setting loading false')
+  const loadPredictions = async (code: string) => {
+    console.log('🔍 loadPredictions called with code:', code)
+    if (!code) {
+      console.log('⚠️ loadPredictions: no code provided, setting loading false')
       setPredictionsLoading(false)
       return
     }
     setPredictionsLoading(true)
     try {
-      console.log('📡 Calling getPlayerPredictions RPC with:', playerCode)
-      const predictionsData = await supabaseService.getPlayerPredictions(playerCode)
+      console.log('📡 Calling getPlayerPredictions RPC with:', code)
+      const predictionsData = await supabaseService.getPlayerPredictions(code)
       console.log('✅ RPC result:', predictionsData)
       const predictionsMap = new Map()
       predictionsData.forEach((pred: any) => {
@@ -196,11 +196,11 @@ export default function TournamentApp() {
 
       console.log('✅ Player set:', player)
       console.log('🔍 Player id:', player.id)
-      console.log('🔍 Using player id for predictions:', player.id)
+      console.log('🔍 Using code for predictions:', code)
       setCurrentPlayer(player)
-      setPlayerCode(player.id)
+      setPlayerCode(code)
       loadAllPlayers()
-      loadPredictions()
+      loadPredictions(code)
       setCurrentScreen('tournament')
       localStorage.setItem('currentScreen', 'tournament')
     } catch (err) {
@@ -241,7 +241,7 @@ export default function TournamentApp() {
     try {
       await supabaseService.savePrediction(playerCode, gameId, prediction, wager)
       loadAllPlayers()
-      loadPredictions()
+      loadPredictions(playerCode)
     } catch (err) {
       console.error('Error saving prediction:', err)
     }
@@ -270,7 +270,7 @@ export default function TournamentApp() {
             console.log('✅ Player restored from Supabase (retry):', data)
             setCurrentPlayer(data)
             loadAllPlayers()
-            loadPredictions()
+            loadPredictions(storedPlayerCode)
             setCurrentScreen(storedScreen || 'tournament')
           } else {
             console.warn('⚠️ Player not found in Supabase (retry), clearing localStorage')
