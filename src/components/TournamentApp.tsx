@@ -352,6 +352,7 @@ export default function TournamentApp() {
           </div>
         ) : (
           <FifaWorldCup
+            key={`${currentPlayer.id}-${Array.from(predictions.keys()).join(',')}`}
             currentPlayer={currentPlayer}
             allPlayers={allPlayers}
             predictions={predictions}
