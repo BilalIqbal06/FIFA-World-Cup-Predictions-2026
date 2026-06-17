@@ -1592,8 +1592,15 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
               </div>
               <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-yellow-400 mb-2">💰 Betting (Knockout Rounds Only)</h3>
-                <p className="text-gray-200">In knockout rounds (Round of 32, 16, 8, 4, Semi Finals, Bronze Medal, Final), you can <span className="text-white font-bold">wager points</span> on your prediction. If correct, you gain the wagered points. If incorrect, you lose the wagered points.</p>
-                <p className="text-gray-300 text-sm mt-2">Example: With 42 points, wager 7 points. Correct → 49 points. Wrong → 35 points.</p>
+                <p className="text-gray-200 mb-2">Available only in:</p>
+                <p className="text-gray-300 text-sm mb-3">Round of 32, Round of 16, Quarterfinals, and Semifinals.</p>
+                <p className="text-gray-200 mb-2">Each player receives <span className="text-white font-bold">3 total wager opportunities</span> for the entire knockout stage.</p>
+                <p className="text-gray-200 mb-2">When placing a knockout prediction, you may choose to wager points:</p>
+                <p className="text-gray-300 text-sm mb-3">• Minimum wager: 4 points<br/>• Maximum wager: Your current total points<br/>• Wagers are optional</p>
+                <p className="text-gray-200 mb-2">Scoring:</p>
+                <p className="text-gray-300 text-sm mb-2">✅ Correct Prediction<br/>You earn: 3 points + your wager amount<br/>Example: 42 points + 7 point wager = 52 points</p>
+                <p className="text-gray-300 text-sm mb-2">❌ Incorrect Prediction<br/>You lose your wager amount<br/>Example: 42 points + 7 point wager = 35 points</p>
+                <p className="text-gray-300 text-sm">Once all 3 wager opportunities are used, you may continue making normal knockout predictions without wagering.</p>
               </div>
             </div>
             <button
