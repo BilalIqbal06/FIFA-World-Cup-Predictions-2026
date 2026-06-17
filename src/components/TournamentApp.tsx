@@ -61,6 +61,7 @@ export default function TournamentApp() {
   const [isLoading, setIsLoading] = useState(true)
   const [predictions, setPredictions] = useState<Map<string, any>>(new Map())
   const [predictionsLoading, setPredictionsLoading] = useState(true)
+  const [wagersUsed, setWagersUsed] = useState(0)
 
   // Load persisted state on mount with retry logic
   useEffect(() => {
@@ -144,6 +145,11 @@ export default function TournamentApp() {
       const predictionsData = await supabaseService.getPlayerPredictions(code)
       console.log('✅ RPC result:', predictionsData)
       const predictionsMap = new Map()
+      let wagersCount = 0
+
+      // Import sampleGames to check game groups
+      const { sampleGames } = await import('../FifaWorldCup')
+
       predictionsData.forEach((pred: any) => {
         const gameId = String(pred.game_id) // Normalize to string to match game.id
         predictionsMap.set(gameId, {
@@ -152,13 +158,27 @@ export default function TournamentApp() {
           timestamp: new Date(pred.created_at),
           wager: pred.wager
         })
+
+        // Count wagers used (wager > 0 in eligible knockout rounds)
+        if (pred.wager && pred.wager > 0) {
+          // Check if this game is in a wager-eligible round
+          const game = sampleGames.find((g: any) => String(g.id) === gameId)
+          const eligibleRounds = ['Round of 32', 'Round of 16', 'Quarterfinals', 'Semifinals']
+          if (game && eligibleRounds.includes(game.group)) {
+            wagersCount++
+          }
+        }
       })
+
       setPredictions(predictionsMap)
+      setWagersUsed(wagersCount)
       console.log('✅ Loaded', predictionsMap.size, 'predictions from Supabase')
       console.log('🔍 Prediction keys:', Array.from(predictionsMap.keys()))
+      console.log('💰 Wagers used:', wagersCount)
     } catch (err) {
       console.error('❌ Failed to load predictions from Supabase:', err)
       setPredictions(new Map()) // Set empty predictions on error
+      setWagersUsed(0)
     } finally {
       setPredictionsLoading(false)
     }
@@ -368,6 +388,7 @@ export default function TournamentApp() {
             currentPlayer={currentPlayer}
             allPlayers={allPlayers}
             predictions={predictions}
+            wagersUsed={wagersUsed}
             onPlaceBet={handlePlaceBet}
             onPrediction={(gameId, prediction, wager) => handlePrediction(gameId, prediction, wager)}
           />
