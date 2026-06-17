@@ -78,7 +78,10 @@ export default function TournamentApp() {
           const data = await supabaseService.getPlayer(storedPlayerCode)
           if (data) {
             console.log('✅ Player restored from Supabase:', data)
+            console.log('🔍 Player id:', data.id)
+            console.log('🔍 Using player id for predictions:', data.id)
             setCurrentPlayer(data)
+            setPlayerCode(data.id)
             loadAllPlayers()
             loadPredictions()
             setCurrentScreen(storedScreen || 'tournament')
@@ -129,13 +132,17 @@ export default function TournamentApp() {
 
   // Load predictions from Supabase
   const loadPredictions = async () => {
+    console.log('🔍 loadPredictions called with playerCode:', playerCode)
     if (!playerCode) {
+      console.log('⚠️ loadPredictions: no playerCode, setting loading false')
       setPredictionsLoading(false)
       return
     }
     setPredictionsLoading(true)
     try {
+      console.log('📡 Calling getPlayerPredictions RPC with:', playerCode)
       const predictionsData = await supabaseService.getPlayerPredictions(playerCode)
+      console.log('✅ RPC result:', predictionsData)
       const predictionsMap = new Map()
       predictionsData.forEach((pred: any) => {
         const gameId = String(pred.game_id) // Normalize to string to match game.id
@@ -173,6 +180,7 @@ export default function TournamentApp() {
 
   // Handle player code entry
   const handleEnterWithCode = async (code: string, username: string) => {
+    console.log('🔍 handleEnterWithCode called with code:', code, 'username:', username)
     setPlayerCode(code)
     localStorage.setItem('playerCode', code)
     localStorage.setItem('username', username)
@@ -180,13 +188,17 @@ export default function TournamentApp() {
     try {
       // Try to fetch existing player
       let player = await supabaseService.getPlayer(code)
-      
+
       if (!player) {
         // Create new player
         player = await supabaseService.createPlayer(code, username)
       }
-      
+
+      console.log('✅ Player set:', player)
+      console.log('🔍 Player id:', player.id)
+      console.log('🔍 Using player id for predictions:', player.id)
       setCurrentPlayer(player)
+      setPlayerCode(player.id)
       loadAllPlayers()
       loadPredictions()
       setCurrentScreen('tournament')
