@@ -60,7 +60,7 @@ export default function TournamentApp() {
   const [errorMessage, setErrorMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [predictions, setPredictions] = useState<Map<string, any>>(new Map())
-  const [predictionsLoading, setPredictionsLoading] = useState(false)
+  const [predictionsLoading, setPredictionsLoading] = useState(true)
 
   // Load persisted state on mount with retry logic
   useEffect(() => {
@@ -339,14 +339,22 @@ export default function TournamentApp() {
           </div>
         </div>
 
-        <FifaWorldCup
-          currentPlayer={currentPlayer}
-          allPlayers={allPlayers}
-          predictions={predictions}
-          predictionsLoading={predictionsLoading}
-          onPlaceBet={handlePlaceBet}
-          onPrediction={(gameId, prediction, wager) => handlePrediction(gameId, prediction, wager)}
-        />
+        {predictionsLoading ? (
+          <div className="min-h-screen bg-gradient-to-br from-green-950 via-blue-950 to-red-950 flex items-center justify-center">
+            <div className="text-white text-center">
+              <h2 className="text-2xl font-bold mb-2">Loading Predictions...</h2>
+              <p className="text-gray-400">Please wait while we fetch your predictions</p>
+            </div>
+          </div>
+        ) : (
+          <FifaWorldCup
+            currentPlayer={currentPlayer}
+            allPlayers={allPlayers}
+            predictions={predictions}
+            onPlaceBet={handlePlaceBet}
+            onPrediction={(gameId, prediction, wager) => handlePrediction(gameId, prediction, wager)}
+          />
+        )}
       </div>
     )
   }

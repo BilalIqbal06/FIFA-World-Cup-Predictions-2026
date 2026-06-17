@@ -1335,12 +1335,11 @@ interface FifaWorldCupProps {
   currentPlayer: Player
   allPlayers: Player[]
   predictions: Map<string, any>
-  predictionsLoading: boolean
   onPlaceBet: (teamId: string, teamName: string) => void
   onPrediction: (gameId: string, prediction: string, wager?: number) => Promise<void>
 }
 
-export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, predictionsLoading, onPlaceBet, onPrediction }: FifaWorldCupProps) {
+export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, onPlaceBet, onPrediction }: FifaWorldCupProps) {
   // Add defensive checks
   if (!currentPlayer) {
     return (
@@ -1348,18 +1347,6 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, p
         <div className="text-white text-center">
           <h2 className="text-2xl font-bold mb-2">Loading...</h2>
           <p className="text-gray-400">Please wait while we set up your experience</p>
-        </div>
-      </div>
-    )
-  }
-
-  // Show loading state while predictions are being fetched
-  if (predictionsLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-green-950 via-blue-950 to-red-950 flex items-center justify-center">
-        <div className="text-white text-center">
-          <h2 className="text-2xl font-bold mb-2">Loading Predictions...</h2>
-          <p className="text-gray-400">Please wait while we fetch your predictions</p>
         </div>
       </div>
     )
@@ -1754,7 +1741,9 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, p
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {gamesForSelectedDate.map((game) => {
-                const existingPrediction = predictions.get(game.id)
+                const gameIdStr = String(game.id)
+                const existingPrediction = predictions.get(gameIdStr)
+                console.log("Rendering game", gameIdStr, "prediction:", existingPrediction)
                 const isAvailable = isGameAvailableForPrediction(game)
                 
                 return (
@@ -1916,7 +1905,9 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, p
                 </h3>
                 <div className="space-y-3">
                   {dayGames.map((game) => {
-                    const existingPrediction = predictions.get(game.id)
+                    const gameIdStr = String(game.id)
+                    const existingPrediction = predictions.get(gameIdStr)
+                    console.log("Rendering schedule game", gameIdStr, "prediction:", existingPrediction)
                     const isAvailable = isGameAvailableForPrediction(game)
                     
                     return (
