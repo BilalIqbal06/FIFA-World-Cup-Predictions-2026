@@ -60,6 +60,7 @@ export default function TournamentApp() {
   const [errorMessage, setErrorMessage] = useState('')
   const [isLoading, setIsLoading] = useState(true)
   const [predictions, setPredictions] = useState<Map<string, any>>(new Map())
+  const [predictionsLoading, setPredictionsLoading] = useState(false)
 
   // Load persisted state on mount with retry logic
   useEffect(() => {
@@ -129,12 +130,14 @@ export default function TournamentApp() {
   // Load predictions from Supabase
   const loadPredictions = async () => {
     if (!playerCode) return
+    setPredictionsLoading(true)
     try {
       const predictionsData = await supabaseService.getPlayerPredictions(playerCode)
       const predictionsMap = new Map()
       predictionsData.forEach((pred: any) => {
-        predictionsMap.set(pred.game_id, {
-          gameId: pred.game_id,
+        const gameId = String(pred.game_id) // Normalize to string to match game.id
+        predictionsMap.set(gameId, {
+          gameId,
           prediction: pred.prediction,
           timestamp: new Date(pred.created_at),
           wager: pred.wager
@@ -142,8 +145,11 @@ export default function TournamentApp() {
       })
       setPredictions(predictionsMap)
       console.log('✅ Loaded', predictionsMap.size, 'predictions from Supabase')
+      console.log('🔍 Prediction keys:', Array.from(predictionsMap.keys()))
     } catch (err) {
       console.error('Error loading predictions:', err)
+    } finally {
+      setPredictionsLoading(false)
     }
   }
 
@@ -337,6 +343,7 @@ export default function TournamentApp() {
           currentPlayer={currentPlayer}
           allPlayers={allPlayers}
           predictions={predictions}
+          predictionsLoading={predictionsLoading}
           onPlaceBet={handlePlaceBet}
           onPrediction={(gameId, prediction, wager) => handlePrediction(gameId, prediction, wager)}
         />
