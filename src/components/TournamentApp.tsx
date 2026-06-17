@@ -129,7 +129,10 @@ export default function TournamentApp() {
 
   // Load predictions from Supabase
   const loadPredictions = async () => {
-    if (!playerCode) return
+    if (!playerCode) {
+      setPredictionsLoading(false)
+      return
+    }
     setPredictionsLoading(true)
     try {
       const predictionsData = await supabaseService.getPlayerPredictions(playerCode)
@@ -147,7 +150,8 @@ export default function TournamentApp() {
       console.log('✅ Loaded', predictionsMap.size, 'predictions from Supabase')
       console.log('🔍 Prediction keys:', Array.from(predictionsMap.keys()))
     } catch (err) {
-      console.error('Error loading predictions:', err)
+      console.error('❌ Failed to load predictions from Supabase:', err)
+      setPredictions(new Map()) // Set empty predictions on error
     } finally {
       setPredictionsLoading(false)
     }
@@ -339,7 +343,7 @@ export default function TournamentApp() {
           </div>
         </div>
 
-        {predictionsLoading ? (
+        {predictionsLoading && currentPlayer ? (
           <div className="min-h-screen bg-gradient-to-br from-green-950 via-blue-950 to-red-950 flex items-center justify-center">
             <div className="text-white text-center">
               <h2 className="text-2xl font-bold mb-2">Loading Predictions...</h2>
