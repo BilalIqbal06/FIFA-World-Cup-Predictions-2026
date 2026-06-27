@@ -112,16 +112,15 @@ export const scoringService = {
 
     // Handle knockout wagering
     if (prediction.wager && prediction.wager > 0) {
-      // Knockout games: normal points + wager
-      const basePoints = predictionText === result ? 3 : 0
+      // Knockout games with wager: no base points, just wager
       if (predictionText === result) {
-        return basePoints + prediction.wager // Correct prediction: normal points + wager
+        return prediction.wager // Correct prediction: exactly the wager amount
       } else {
-        return basePoints - prediction.wager // Incorrect prediction: normal points - wager
+        return -prediction.wager // Incorrect prediction: subtract exactly the wager amount
       }
     }
 
-    // Regular match scoring
+    // Regular match scoring (and knockout without wager)
     if (predictionText === result) {
       return 3 // Correct winner prediction
     } else {

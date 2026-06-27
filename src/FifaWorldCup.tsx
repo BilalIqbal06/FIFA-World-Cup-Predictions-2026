@@ -1636,8 +1636,8 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                 <p className="text-gray-200 mb-2">When placing a knockout prediction, you may choose to wager points:</p>
                 <p className="text-gray-300 text-sm mb-3">• Minimum wager: 4 points<br/>• Maximum wager: Your current total points<br/>• Wagers are optional</p>
                 <p className="text-gray-200 mb-2">Scoring:</p>
-                <p className="text-gray-300 text-sm mb-2">✅ Correct Prediction<br/>You earn: 3 points + your wager amount<br/>Example: 42 points + 7 point wager = 52 points</p>
-                <p className="text-gray-300 text-sm mb-2">❌ Incorrect Prediction<br/>You lose your wager amount<br/>Example: 42 points + 7 point wager = 35 points</p>
+                <p className="text-gray-300 text-sm mb-2">✅ No Wager (Normal Prediction)<br/>Correct: +3 points | Incorrect: 0 points</p>
+                <p className="text-gray-300 text-sm mb-2">✅ With Wager<br/>Correct: +your wager amount | Incorrect: -your wager amount<br/>Example: 42 points + 10 point wager → Correct: 52 points, Incorrect: 32 points</p>
                 <p className="text-gray-300 text-sm">Once all 3 wager opportunities are used, you may continue making normal knockout predictions without wagering.</p>
               </div>
             </div>
