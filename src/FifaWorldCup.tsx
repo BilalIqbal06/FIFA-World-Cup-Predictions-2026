@@ -1629,16 +1629,25 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                 <p className="text-gray-200">You can predict games the <span className="text-white font-bold">day before</span> they play, up until the game starts. For example, games on June 11 can be predicted on June 10.</p>
               </div>
               <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-yellow-400 mb-2">💰 Betting (Knockout Rounds Only)</h3>
-                <p className="text-gray-200 mb-2">Available only in:</p>
-                <p className="text-gray-300 text-sm mb-3">Round of 32, Round of 16, Quarterfinals, and Semifinals.</p>
-                <p className="text-gray-200 mb-2">Each player receives <span className="text-white font-bold">3 total wager opportunities</span> for the entire knockout stage.</p>
-                <p className="text-gray-200 mb-2">When placing a knockout prediction, you may choose to wager points:</p>
-                <p className="text-gray-300 text-sm mb-3">• Minimum wager: 4 points<br/>• Maximum wager: Your current total points<br/>• Wagers are optional</p>
-                <p className="text-gray-200 mb-2">Scoring:</p>
-                <p className="text-gray-300 text-sm mb-2">✅ No Wager (Normal Prediction)<br/>Correct: +3 points | Incorrect: 0 points</p>
-                <p className="text-gray-300 text-sm mb-2">✅ With Wager<br/>Correct: +your wager amount | Incorrect: -your wager amount<br/>Example: 42 points + 10 point wager → Correct: 52 points, Incorrect: 32 points</p>
-                <p className="text-gray-300 text-sm">Once all 3 wager opportunities are used, you may continue making normal knockout predictions without wagering.</p>
+                <h3 className="text-lg font-semibold text-yellow-400 mb-3">💰 Betting (Knockout Rounds Only)</h3>
+                <p className="text-gray-200 mb-2">Available during:</p>
+                <p className="text-gray-300 text-sm mb-4">• Round of 32<br/>• Round of 16<br/>• Quarterfinals<br/>• Semifinals</p>
+                <p className="text-gray-200 mb-2">Each player gets exactly <span className="text-white font-bold">3 total wagers</span> for the entire knockout stage.</p>
+                <p className="text-gray-200 mb-4">For every knockout match, you can either:<br/>• Make a normal prediction (no risk)<br/>• Use one of your 3 wagers (high risk, high reward)</p>
+                <p className="text-gray-200 font-semibold mb-2">Wager Rules</p>
+                <p className="text-gray-300 text-sm mb-4">• Minimum wager: 4 points<br/>• Maximum wager: Your current total points<br/>• You can only wager 3 times during the knockout stage.</p>
+                <p className="text-gray-200 font-semibold mb-2">📈 If You DON'T Wager</p>
+                <p className="text-gray-300 text-sm mb-1">✅ Correct prediction:<br/>+3 points</p>
+                <p className="text-gray-300 text-sm mb-4">❌ Wrong prediction:<br/>0 points</p>
+                <p className="text-gray-200 font-semibold mb-2">🎲 If You DO Wager</p>
+                <p className="text-gray-300 text-sm mb-1">✅ Correct prediction:<br/>You gain exactly the amount you wagered.</p>
+                <p className="text-gray-300 text-sm mb-4">❌ Wrong prediction:<br/>You lose exactly the amount you wagered.</p>
+                <p className="text-gray-200 font-semibold mb-2">Example</p>
+                <p className="text-gray-300 text-sm mb-2">You have 42 points and wager 10.</p>
+                <p className="text-gray-300 text-sm mb-1">✅ Correct prediction:<br/>42 → 52 points</p>
+                <p className="text-gray-300 text-sm mb-4">❌ Wrong prediction:<br/>42 → 32 points</p>
+                <p className="text-gray-300 text-sm">After you've used all 3 wagers, you can still make normal knockout predictions for +3 points per correct pick.</p>
+                <p className="text-gray-300 text-sm mt-3">⚠️ Wagers cannot be changed after you submit your prediction.</p>
               </div>
             </div>
             <button
