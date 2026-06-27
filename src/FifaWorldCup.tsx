@@ -1865,18 +1865,32 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                                 type="number"
                                 min="4"
                                 max={currentPlayer.points}
-                                value={wagerInput.get(game.id) || 0}
+                                value={wagerInput.get(game.id) || ''}
                                 onChange={(e) => {
-                                  const value = parseInt(e.target.value) || 0
-                                  const newWagers = new Map(wagerInput)
-                                  newWagers.set(game.id, value)
-                                  setWagerInput(newWagers)
+                                  const rawValue = e.target.value
+                                  // Handle empty input
+                                  if (rawValue === '') {
+                                    const newWagers = new Map(wagerInput)
+                                    newWagers.delete(game.id)
+                                    setWagerInput(newWagers)
+                                    return
+                                  }
+                                  // Remove leading zeros and validate
+                                  const numValue = parseInt(rawValue, 10)
+                                  if (!isNaN(numValue) && numValue >= 0) {
+                                    const newWagers = new Map(wagerInput)
+                                    newWagers.set(game.id, numValue)
+                                    setWagerInput(newWagers)
+                                  }
                                 }}
-                                placeholder="Enter wager (min: 4)"
+                                placeholder="Enter wager amount"
                                 className="flex-1 bg-gray-900/50 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-500"
                               />
                               <span className="text-gray-400 text-sm">/ {currentPlayer.points} pts</span>
                             </div>
+                            {currentPlayer.points < 4 && (
+                              <p className="text-red-400 text-xs mb-2">You need at least 4 points to wager.</p>
+                            )}
                             <div className="flex gap-2">
                               <button
                                 onClick={() => {
@@ -1886,7 +1900,12 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                                     setWagerStep(new Map(wagerStep.set(game.id, 'wager')))
                                   }
                                 }}
-                                disabled={(wagerInput.get(game.id) || 0) < 4 || (wagerInput.get(game.id) || 0) > currentPlayer.points || (3 - wagersUsed) === 0}
+                                disabled={
+                                  (wagerInput.get(game.id) || 0) < 4 ||
+                                  (wagerInput.get(game.id) || 0) > currentPlayer.points ||
+                                  (3 - wagersUsed) === 0 ||
+                                  currentPlayer.points < 4
+                                }
                                 className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-2 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 Wager?
