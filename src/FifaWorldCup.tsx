@@ -1857,7 +1857,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                     ) : (
                       <div className="space-y-2">
                         {/* Wager Step for Knockout Games */}
-                        {isWagerEligibleRound(game) && !existingPrediction && wagerStep.get(game.id) === 'none' && (
+                        {isWagerEligibleRound(game) && !existingPrediction && !wagerStep.has(game.id) && (
                           <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4 mb-3">
                             <p className="text-yellow-400 font-semibold text-sm mb-3">💰 Bet Your Points</p>
                             <div className="flex items-center gap-2 mb-3">
@@ -1904,7 +1904,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                         )}
 
                         {/* Team prediction buttons - show only after wager step is complete */}
-                        {(!isWagerEligibleRound(game) || existingPrediction || wagerStep.get(game.id) !== 'none') && (
+                        {(!isWagerEligibleRound(game) || existingPrediction || wagerStep.has(game.id)) && (
                           <>
                             <p className="text-sm text-blue-300 text-center mb-3">Make your prediction:</p>
                             <div className="grid grid-cols-3 gap-2">
