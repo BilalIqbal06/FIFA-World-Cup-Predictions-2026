@@ -367,6 +367,13 @@ interface Game {
 }
 
 // Official FIFA World Cup 2026 Schedule (June 11 - July 19, 2026)
+
+// TEMPORARY WAGER TEST MODE
+// Set to true to enable testing of knockout wager functionality before Round of 32
+// When enabled, Game 73 will be available for prediction immediately
+// After testing, set to false and redeploy
+const ENABLE_WAGER_TEST_MODE = true
+
 // Knockout participant mapping for easy updates
 const knockoutParticipants: Record<string, { name: string; flag: string; id: string }> = {
   // Known teams
@@ -1074,7 +1081,7 @@ export const sampleGames: Game[] = [
     id: '73',
     homeTeam: getKnockoutTeam('za'),
     awayTeam: getKnockoutTeam('ca'),
-    date: new Date('2026-06-28T15:00:00-04:00'),
+    date: ENABLE_WAGER_TEST_MODE ? new Date(Date.now() + 86400000) : new Date('2026-06-28T15:00:00-04:00'),
     venue: 'Inglewood',
     group: 'Round of 32',
     status: 'upcoming'
