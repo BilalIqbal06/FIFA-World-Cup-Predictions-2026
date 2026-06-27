@@ -367,6 +367,40 @@ interface Game {
 }
 
 // Official FIFA World Cup 2026 Schedule (June 11 - July 19, 2026)
+// Knockout participant mapping for easy updates
+const knockoutParticipants: Record<string, { name: string; flag: string; id: string }> = {
+  // Known teams
+  mx: { name: 'Mexico', flag: '🇲🇽', id: 'mx' },
+  za: { name: 'South Africa', flag: '🇿🇦', id: 'za' },
+  ca: { name: 'Canada', flag: '🇨🇦', id: 'ca' },
+  ba: { name: 'Bosnia & Herzegovina', flag: '🇧🇦', id: 'ba' },
+  de: { name: 'Germany', flag: '🇩🇪', id: 'de' },
+  py: { name: 'Paraguay', flag: '🇵🇾', id: 'py' },
+  nl: { name: 'Netherlands', flag: '🇳🇱', id: 'nl' },
+  ma: { name: 'Morocco', flag: '🇲🇦', id: 'ma' },
+  br: { name: 'Brazil', flag: '🇧🇷', id: 'br' },
+  jp: { name: 'Japan', flag: '🇯🇵', id: 'jp' },
+  ci: { name: 'Côte d\'Ivoire', flag: '🇨🇮', id: 'ci' },
+  no: { name: 'Norway', flag: '🇳🇴', id: 'no' },
+  fr: { name: 'France', flag: '🇫🇷', id: 'fr' },
+  se: { name: 'Sweden', flag: '🇸🇪', id: 'se' },
+  be: { name: 'Belgium', flag: '🇧🇪', id: 'be' },
+  us: { name: 'USA', flag: '🇺🇸', id: 'us' },
+  es: { name: 'Spain', flag: '🇪🇸', id: 'es' },
+  ch: { name: 'Switzerland', flag: '🇨🇭', id: 'ch' },
+  au: { name: 'Australia', flag: '🇦🇺', id: 'au' },
+  eg: { name: 'Egypt', flag: '🇪🇬', id: 'eg' },
+  ar: { name: 'Argentina', flag: '🇦🇷', id: 'ar' },
+  cv: { name: 'Cabo Verde', flag: '🇨🇻', id: 'cv' },
+  // TBD placeholder
+  tbd: { name: 'TBD', flag: '🏆', id: 'tbd' }
+}
+
+// Helper to get team from mapping or return TBD
+const getKnockoutTeam = (key: string) => {
+  return knockoutParticipants[key] || knockoutParticipants.tbd
+}
+
 // All times in Eastern Time (ET/EDT, UTC-4)
 // Source: openfootball/worldcup.json (official FIFA schedule)
 export const sampleGames: Game[] = [
@@ -1038,17 +1072,26 @@ export const sampleGames: Game[] = [
   // Round of 32
   {
     id: '73',
-    homeTeam: { id: 'tba', name: 'Group A runners-up', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group B runners-up', flag: '🏆' },
+    homeTeam: getKnockoutTeam('za'),
+    awayTeam: getKnockoutTeam('ca'),
     date: new Date('2026-06-28T15:00:00-04:00'),
     venue: 'Inglewood',
     group: 'Round of 32',
     status: 'upcoming'
   },
   {
+    id: '76',
+    homeTeam: getKnockoutTeam('br'),
+    awayTeam: getKnockoutTeam('jp'),
+    date: new Date('2026-06-29T13:00:00-04:00'),
+    venue: 'Houston',
+    group: 'Round of 32',
+    status: 'upcoming'
+  },
+  {
     id: '74',
-    homeTeam: { id: 'tba', name: 'Group E winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group A/B/C/D/F third place', flag: '🏆' },
+    homeTeam: getKnockoutTeam('de'),
+    awayTeam: getKnockoutTeam('py'),
     date: new Date('2026-06-29T16:30:00-04:00'),
     venue: 'Boston',
     group: 'Round of 32',
@@ -1056,44 +1099,35 @@ export const sampleGames: Game[] = [
   },
   {
     id: '75',
-    homeTeam: { id: 'tba', name: 'Group F winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group C runners-up', flag: '🏆' },
+    homeTeam: getKnockoutTeam('nl'),
+    awayTeam: getKnockoutTeam('ma'),
     date: new Date('2026-06-29T21:00:00-04:00'),
     venue: 'Guadalupe',
     group: 'Round of 32',
     status: 'upcoming'
   },
   {
-    id: '76',
-    homeTeam: { id: 'tba', name: 'Group C winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group F runners-up', flag: '🏆' },
-    date: new Date('2026-06-30T13:00:00-04:00'),
-    venue: 'Houston',
-    group: 'Round of 32',
-    status: 'upcoming'
-  },
-  {
     id: '77',
-    homeTeam: { id: 'tba', name: 'Group I winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group C/D/F/G/H third place', flag: '🏆' },
-    date: new Date('2026-06-30T17:00:00-04:00'),
+    homeTeam: getKnockoutTeam('ci'),
+    awayTeam: getKnockoutTeam('no'),
+    date: new Date('2026-06-30T13:00:00-04:00'),
     venue: 'New Jersey',
     group: 'Round of 32',
     status: 'upcoming'
   },
   {
     id: '78',
-    homeTeam: { id: 'tba', name: 'Group E runners-up', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group I runners-up', flag: '🏆' },
-    date: new Date('2026-06-30T13:00:00-04:00'),
+    homeTeam: getKnockoutTeam('fr'),
+    awayTeam: getKnockoutTeam('se'),
+    date: new Date('2026-06-30T17:00:00-04:00'),
     venue: 'Dallas',
     group: 'Round of 32',
     status: 'upcoming'
   },
   {
     id: '79',
-    homeTeam: { id: 'tba', name: 'Group A winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group C/E/F/H/I third place', flag: '🏆' },
+    homeTeam: getKnockoutTeam('mx'),
+    awayTeam: getKnockoutTeam('tbd'),
     date: new Date('2026-06-30T21:00:00-04:00'),
     venue: 'Mexico City',
     group: 'Round of 32',
@@ -1101,8 +1135,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '80',
-    homeTeam: { id: 'tba', name: 'Group L winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group E/H/I/J/K third place', flag: '🏆' },
+    homeTeam: getKnockoutTeam('tbd'),
+    awayTeam: getKnockoutTeam('tbd'),
     date: new Date('2026-07-01T12:00:00-04:00'),
     venue: 'Atlanta',
     group: 'Round of 32',
@@ -1110,53 +1144,62 @@ export const sampleGames: Game[] = [
   },
   {
     id: '81',
-    homeTeam: { id: 'tba', name: 'Group D winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group B/E/F/I/J third place', flag: '🏆' },
-    date: new Date('2026-07-01T20:00:00-04:00'),
+    homeTeam: getKnockoutTeam('be'),
+    awayTeam: getKnockoutTeam('tbd'),
+    date: new Date('2026-07-01T16:00:00-04:00'),
     venue: 'San Francisco Bay Area',
     group: 'Round of 32',
     status: 'upcoming'
   },
   {
     id: '82',
-    homeTeam: { id: 'tba', name: 'Group G winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group A/E/H/I/J third place', flag: '🏆' },
-    date: new Date('2026-07-02T16:00:00-04:00'),
+    homeTeam: getKnockoutTeam('us'),
+    awayTeam: getKnockoutTeam('ba'),
+    date: new Date('2026-07-01T20:00:00-04:00'),
     venue: 'Seattle',
     group: 'Round of 32',
     status: 'upcoming'
   },
   {
     id: '83',
-    homeTeam: { id: 'tba', name: 'Group K runners-up', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group L runners-up', flag: '🏆' },
-    date: new Date('2026-07-02T19:00:00-04:00'),
+    homeTeam: getKnockoutTeam('es'),
+    awayTeam: getKnockoutTeam('tbd'),
+    date: new Date('2026-07-02T15:00:00-04:00'),
     venue: 'Toronto',
     group: 'Round of 32',
     status: 'upcoming'
   },
   {
     id: '84',
-    homeTeam: { id: 'tba', name: 'Group H winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group J runners-up', flag: '🏆' },
-    date: new Date('2026-07-02T15:00:00-04:00'),
+    homeTeam: getKnockoutTeam('tbd'),
+    awayTeam: getKnockoutTeam('tbd'),
+    date: new Date('2026-07-02T19:00:00-04:00'),
     venue: 'Los Angeles',
     group: 'Round of 32',
     status: 'upcoming'
   },
   {
     id: '85',
-    homeTeam: { id: 'tba', name: 'Group B winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group E/F/G/I/J third place', flag: '🏆' },
+    homeTeam: getKnockoutTeam('ch'),
+    awayTeam: getKnockoutTeam('tbd'),
     date: new Date('2026-07-02T23:00:00-04:00'),
     venue: 'Vancouver',
     group: 'Round of 32',
     status: 'upcoming'
   },
   {
+    id: '88',
+    homeTeam: getKnockoutTeam('au'),
+    awayTeam: getKnockoutTeam('eg'),
+    date: new Date('2026-07-03T14:00:00-04:00'),
+    venue: 'Dallas',
+    group: 'Round of 32',
+    status: 'upcoming'
+  },
+  {
     id: '86',
-    homeTeam: { id: 'tba', name: 'Group J winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group H runners-up', flag: '🏆' },
+    homeTeam: getKnockoutTeam('ar'),
+    awayTeam: getKnockoutTeam('cv'),
     date: new Date('2026-07-03T18:00:00-04:00'),
     venue: 'Miami',
     group: 'Round of 32',
@@ -1164,19 +1207,10 @@ export const sampleGames: Game[] = [
   },
   {
     id: '87',
-    homeTeam: { id: 'tba', name: 'Group K winners', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group D/E/I/J/L third place', flag: '🏆' },
+    homeTeam: getKnockoutTeam('tbd'),
+    awayTeam: getKnockoutTeam('tbd'),
     date: new Date('2026-07-03T21:30:00-04:00'),
     venue: 'Kansas City',
-    group: 'Round of 32',
-    status: 'upcoming'
-  },
-  {
-    id: '88',
-    homeTeam: { id: 'tba', name: 'Group D runners-up', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Group G runners-up', flag: '🏆' },
-    date: new Date('2026-07-03T14:00:00-04:00'),
-    venue: 'Dallas',
     group: 'Round of 32',
     status: 'upcoming'
   },
