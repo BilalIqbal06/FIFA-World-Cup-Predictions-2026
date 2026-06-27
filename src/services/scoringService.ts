@@ -15,7 +15,6 @@ export const scoringService = {
    * This function is idempotent - running it multiple times won't award duplicate points
    */
   async calculateMatchScores() {
-    console.log('Starting match score calculation...')
 
     // Fetch all unscored match results
     const { data: unscoredMatches, error: matchesError } = await supabase
@@ -29,24 +28,20 @@ export const scoringService = {
     }
 
     if (!unscoredMatches || unscoredMatches.length === 0) {
-      console.log('No unscored matches found')
       return
     }
 
-    console.log(`Found ${unscoredMatches.length} unscored matches`)
 
     for (const match of unscoredMatches) {
       await this.scoreMatch(match)
     }
 
-    console.log('Match score calculation complete')
   },
 
   /**
    * Score a single match
    */
   async scoreMatch(match: any) {
-    console.log(`Scoring match: ${match.home_team} vs ${match.away_team}`)
 
     // Fetch all predictions for this match
     const { data: predictions, error: predictionsError } = await supabase
@@ -60,12 +55,10 @@ export const scoringService = {
     }
 
     if (!predictions || predictions.length === 0) {
-      console.log('No predictions found for this match')
       await this.markMatchAsScored(match.id)
       return
     }
 
-    console.log(`Found ${predictions.length} predictions for this match`)
 
     // Calculate points for each prediction
     for (const prediction of predictions) {
@@ -95,7 +88,6 @@ export const scoringService = {
         throw updateError
       }
 
-      console.log(`Updated player ${prediction.players.username}: +${points} points`)
     }
 
     // Mark match as scored
@@ -154,7 +146,6 @@ export const scoringService = {
       throw error
     }
 
-    console.log(`Match ${matchId} marked as scored`)
   },
 
   /**
@@ -162,7 +153,6 @@ export const scoringService = {
    * This function is idempotent - running it multiple times won't award duplicate points
    */
   async applyWinnerBonus(winnerTeamName: string) {
-    console.log('Applying World Cup winner bonus...')
 
     // Fetch all players who haven't received the bonus yet
     const { data: players, error: playersError } = await supabase
@@ -177,11 +167,9 @@ export const scoringService = {
     }
 
     if (!players || players.length === 0) {
-      console.log('No players eligible for winner bonus')
       return
     }
 
-    console.log(`Found ${players.length} players eligible for winner bonus`)
 
     let correctCount = 0
     let incorrectCount = 0
@@ -217,14 +205,11 @@ export const scoringService = {
 
       if (isCorrect) {
         correctCount++
-        console.log(`Player ${player.username}: Correct winner pick (+20 points)`)
       } else {
         incorrectCount++
-        console.log(`Player ${player.username}: Incorrect winner pick (+0 points)`)
       }
     }
 
-    console.log(`Winner bonus applied: ${correctCount} correct, ${incorrectCount} incorrect`)
   },
 
   /**
@@ -238,7 +223,6 @@ export const scoringService = {
     away_score: number
     result: 'home_win' | 'away_win' | 'draw'
   }) {
-    console.log(`Importing match result: ${matchResult.home_team} vs ${matchResult.away_team}`)
 
     // Check if match result already exists
     const { data: existing, error: existingError } = await supabase
@@ -248,7 +232,6 @@ export const scoringService = {
       .single()
 
     if (existing && !existingError) {
-      console.log('Match result already exists, skipping import')
       return
     }
 
@@ -270,7 +253,6 @@ export const scoringService = {
       throw insertError
     }
 
-    console.log('Match result imported successfully')
 
     // Trigger scoring for this match
     await this.calculateMatchScores()

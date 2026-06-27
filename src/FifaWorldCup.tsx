@@ -1419,9 +1419,6 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
     .map(player => ({ username: player.username, points: player.points }))
     .sort((a, b) => b.points - a.points)
 
-  // Debug: Log prediction keys
-  console.log('🔍 FifaWorldCup received predictions keys:', Array.from(predictions.keys()))
-
   // Check if a game is in a wager-eligible round
   const isWagerEligibleRound = (game: Game): boolean => {
     const eligibleRounds = ['Round of 32', 'Round of 16', 'Quarterfinals', 'Semifinals']
@@ -1718,13 +1715,6 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
           )}
         </div>
 
-            {/* Debug: Prediction Keys */}
-            <div className="bg-blue-900/30 border border-blue-500/30 rounded-lg p-3 mb-4">
-              <p className="text-xs text-blue-300 font-mono">
-                Prediction keys loaded: {Array.from(predictions.keys()).join(', ') || '(none)'}
-              </p>
-            </div>
-
             {/* Current Date Display */}
             <div className="bg-gradient-to-br from-green-950/80 via-blue-950/80 to-red-950/80 backdrop-blur-lg rounded-2xl p-6 mb-8 border border-yellow-500/30 shadow-xl">
           <div className="flex items-center justify-between">
@@ -1780,7 +1770,6 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
               {gamesForSelectedDate.map((game) => {
                 const gameIdStr = String(game.id)
                 const existingPrediction = predictions.get(gameIdStr)
-                console.log("Rendering game", gameIdStr, "prediction:", existingPrediction)
                 const isAvailable = isGameAvailableForPrediction(game)
                 
                 return (
@@ -1972,7 +1961,6 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                   {dayGames.map((game) => {
                     const gameIdStr = String(game.id)
                     const existingPrediction = predictions.get(gameIdStr)
-                    console.log("Rendering schedule game", gameIdStr, "prediction:", existingPrediction)
                     const isAvailable = isGameAvailableForPrediction(game)
                     
                     return (
