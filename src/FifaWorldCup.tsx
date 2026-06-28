@@ -364,6 +364,8 @@ interface Game {
   group: string
   status: GameStatus
   actualResult?: PredictionType
+  homeScore?: number
+  awayScore?: number
 }
 
 // Official FIFA World Cup 2026 Schedule (June 11 - July 19, 2026)
@@ -1088,7 +1090,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-06-28T15:00:00-04:00'),
     venue: 'Inglewood',
     group: 'Round of 32',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'away',
+    homeScore: 0,
+    awayScore: 1
   },
   {
     id: '76',
@@ -1838,14 +1843,18 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                         </span>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        game.status === 'live' ? 'bg-red-500/20 text-red-400 border border-red-500/30 animate-pulse' :
+                        game.status === 'finished' ? 'bg-gray-500/20 text-gray-400 border border-gray-500/30' :
                         isAvailable ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'
                       }`}>
-                        {isAvailable ? 'Open for Prediction' : 'Prediction Closed 🔒'}
+                        {game.status === 'live' ? '🔴 LIVE' :
+                         game.status === 'finished' ? '⚫ FINAL' :
+                         isAvailable ? '🟢 Open' : '🔒 Closed'}
                       </span>
                     </div>
                     
                     <div className="flex items-center justify-between mb-6">
-                      <div className={`text-center flex-1 ${game.actualResult === 'home' ? 'ring-2 ring-green-400 ring-opacity-50 rounded-lg p-2 bg-green-500/10' : ''}`}>
+                      <div className={`text-center flex-1 ${game.actualResult === 'home' ? 'ring-2 ring-green-400 ring-opacity-50 rounded-lg p-2 bg-green-500/10' : game.status === 'finished' && game.actualResult === 'away' ? 'opacity-50' : ''}`}>
                         <img
                           src={`https://flagcdn.com/w80/${getFlagCode(game.homeTeam.id)}.png`}
                           alt={game.homeTeam.name}
@@ -1857,15 +1866,24 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                         />
                         <span className="text-4xl hidden">{game.homeTeam.flag}</span>
                         <p className="text-white font-bold text-lg">{game.homeTeam.name}</p>
+                        {game.status === 'finished' && game.homeScore !== undefined && (
+                          <p className="text-3xl font-bold text-yellow-400 mt-1">{game.homeScore}</p>
+                        )}
                         {game.actualResult === 'home' && <p className="text-green-400 text-sm mt-1">✓ Winner</p>}
                       </div>
 
                       <div className="text-center px-4">
-                        <p className="text-blue-300 text-sm mb-1">{formatDate(game.date)}</p>
-                        <p className="text-yellow-400 font-bold text-xl">{formatTime(game.date)}</p>
+                        {game.status === 'finished' ? (
+                          <p className="text-2xl font-bold text-white">–</p>
+                        ) : (
+                          <>
+                            <p className="text-blue-300 text-sm mb-1">{formatDate(game.date)}</p>
+                            <p className="text-yellow-400 font-bold text-xl">{formatTime(game.date)}</p>
+                          </>
+                        )}
                       </div>
 
-                      <div className={`text-center flex-1 ${game.actualResult === 'away' ? 'ring-2 ring-green-400 ring-opacity-50 rounded-lg p-2 bg-green-500/10' : ''}`}>
+                      <div className={`text-center flex-1 ${game.actualResult === 'away' ? 'ring-2 ring-green-400 ring-opacity-50 rounded-lg p-2 bg-green-500/10' : game.status === 'finished' && game.actualResult === 'home' ? 'opacity-50' : ''}`}>
                         <img
                           src={`https://flagcdn.com/w80/${getFlagCode(game.awayTeam.id)}.png`}
                           alt={game.awayTeam.name}
@@ -1877,26 +1895,66 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                         />
                         <span className="text-4xl hidden">{game.awayTeam.flag}</span>
                         <p className="text-white font-bold text-lg">{game.awayTeam.name}</p>
+                        {game.status === 'finished' && game.awayScore !== undefined && (
+                          <p className="text-3xl font-bold text-yellow-400 mt-1">{game.awayScore}</p>
+                        )}
                         {game.actualResult === 'away' && <p className="text-green-400 text-sm mt-1">✓ Winner</p>}
                       </div>
                     </div>
                     
                     {existingPrediction ? (
-                      <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4 text-center">
-                        <p className="text-yellow-400 font-semibold mb-1">✓ Prediction Submitted</p>
-                        <p className="text-white">
-                          You predicted: <span className="font-bold">
-                            {existingPrediction.prediction === 'home' ? game.homeTeam.name :
-                             existingPrediction.prediction === 'away' ? game.awayTeam.name :
-                             'Tie'}
-                          </span>
-                        </p>
-                        {existingPrediction.wager && (
-                          <p className="text-yellow-400 text-sm mt-2">
-                            💰 Wager: {existingPrediction.wager} pts
+                      game.status === 'finished' ? (
+                        <div className={`rounded-lg p-4 text-center ${
+                          existingPrediction.prediction === game.actualResult
+                            ? 'bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-500/40'
+                            : 'bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40'
+                        }`}>
+                          <p className={`font-semibold mb-1 ${
+                            existingPrediction.prediction === game.actualResult ? 'text-green-400' : 'text-red-400'
+                          }`}>
+                            {existingPrediction.prediction === game.actualResult ? '✅ Correct Prediction' : '❌ Incorrect Prediction'}
                           </p>
-                        )}
-                      </div>
+                          <p className="text-white text-sm mb-1">
+                            You picked: <span className="font-bold">
+                              {existingPrediction.prediction === 'home' ? game.homeTeam.name :
+                               existingPrediction.prediction === 'away' ? game.awayTeam.name :
+                               'Tie'}
+                            </span>
+                          </p>
+                          {game.homeScore !== undefined && game.awayScore !== undefined && (
+                            <p className="text-gray-300 text-sm mb-1">
+                              Final Score: {game.homeTeam.name} {game.homeScore} – {game.awayScore} {game.awayTeam.name}
+                            </p>
+                          )}
+                          <p className={`font-bold ${
+                            existingPrediction.prediction === game.actualResult ? 'text-green-400' : 'text-red-400'
+                          }`}>
+                            {existingPrediction.wager ? (
+                              existingPrediction.prediction === game.actualResult
+                                ? `+${existingPrediction.wager} points`
+                                : `-${existingPrediction.wager} points`
+                            ) : (
+                              existingPrediction.prediction === game.actualResult ? '+3 points' : '+0 points'
+                            )}
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4 text-center">
+                          <p className="text-yellow-400 font-semibold mb-1">✓ Prediction Submitted</p>
+                          <p className="text-white">
+                            You predicted: <span className="font-bold">
+                              {existingPrediction.prediction === 'home' ? game.homeTeam.name :
+                               existingPrediction.prediction === 'away' ? game.awayTeam.name :
+                               'Tie'}
+                            </span>
+                          </p>
+                          {existingPrediction.wager && (
+                            <p className="text-yellow-400 text-sm mt-2">
+                              💰 Wager: {existingPrediction.wager} pts
+                            </p>
+                          )}
+                        </div>
+                      )
                     ) : predictionSaved.get(game.id) ? (
                       <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-500/40 rounded-lg p-4 text-center animate-pulse">
                         <p className="text-green-400 font-semibold mb-1">✓ Prediction Saved</p>
