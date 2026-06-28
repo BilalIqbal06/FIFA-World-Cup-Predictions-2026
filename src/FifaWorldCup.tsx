@@ -1385,12 +1385,11 @@ interface FifaWorldCupProps {
   currentPlayer: Player
   allPlayers: Player[]
   predictions: Map<string, any>
-  wagersUsed: number
   onPlaceBet: (teamId: string, teamName: string) => void
   onPrediction: (gameId: string, prediction: string, wager?: number) => Promise<void>
 }
 
-export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, wagersUsed, onPlaceBet, onPrediction }: FifaWorldCupProps) {
+export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, onPlaceBet, onPrediction }: FifaWorldCupProps) {
   // Add defensive checks
   if (!currentPlayer) {
     return (
@@ -1441,6 +1440,14 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
   const isWagerEligibleRound = (game: Game): boolean => {
     const eligibleRounds = ['Round of 32', 'Round of 16', 'Quarterfinals', 'Semifinals']
     return eligibleRounds.includes(game.group)
+  }
+
+  // Check if player has already used a wager in a specific round
+  const hasUsedWagerInRound = (round: string): boolean => {
+    return Array.from(predictions.values()).some(pred => {
+      const game = games.find(g => g.id === pred.gameId)
+      return game && game.group === round && pred.wager > 0
+    })
   }
 
   // Check if a game is available for prediction
@@ -1623,8 +1630,10 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
             
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/50 rounded-lg px-4 py-2">
-                <span className="text-sm text-yellow-200">Total wagers left:</span>
-                <span className="text-2xl font-bold text-yellow-400">{3 - wagersUsed}</span>
+                <span className="text-sm text-yellow-200">Round of 32 Wager:</span>
+                <span className={`text-2xl font-bold ${hasUsedWagerInRound('Round of 32') ? 'text-gray-400' : 'text-yellow-400'}`}>
+                  {hasUsedWagerInRound('Round of 32') ? 'Used' : 'Available'}
+                </span>
               </div>
               <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/50 rounded-lg px-4 py-2">
                 <span className="text-sm text-yellow-200">Your Points:</span>
@@ -1671,10 +1680,10 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                 <h3 className="text-lg font-semibold text-yellow-400 mb-3">💰 Betting (Knockout Rounds Only)</h3>
                 <p className="text-gray-200 mb-2">Available during:</p>
                 <p className="text-gray-300 text-sm mb-4">• Round of 32<br/>• Round of 16<br/>• Quarterfinals<br/>• Semifinals</p>
-                <p className="text-gray-200 mb-2">Each player gets exactly <span className="text-white font-bold">3 total wagers</span> for the entire knockout stage.</p>
-                <p className="text-gray-200 mb-4">For every knockout match, you can either:<br/>• Make a normal prediction (no risk)<br/>• Use one of your 3 wagers (high risk, high reward)</p>
+                <p className="text-gray-200 mb-2">Each player gets exactly <span className="text-white font-bold">1 wager per round</span>.</p>
+                <p className="text-gray-200 mb-4">For every knockout match, you can either:<br/>• Make a normal prediction (no risk)<br/>• Use your round's wager (high risk, high reward)</p>
                 <p className="text-gray-200 font-semibold mb-2">Wager Rules</p>
-                <p className="text-gray-300 text-sm mb-4">• Minimum wager: 4 points<br/>• Maximum wager: Your current total points<br/>• You can only wager 3 times during the knockout stage.</p>
+                <p className="text-gray-300 text-sm mb-4">• Minimum wager: 4 points<br/>• Maximum wager: Your current total points<br/>• You can only wager once per round (wagers don't carry over)</p>
                 <p className="text-gray-200 font-semibold mb-2">📈 If You DON'T Wager</p>
                 <p className="text-gray-300 text-sm mb-1">✅ Correct prediction:<br/>+3 points</p>
                 <p className="text-gray-300 text-sm mb-4">❌ Wrong prediction:<br/>0 points</p>
@@ -1682,10 +1691,10 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                 <p className="text-gray-300 text-sm mb-1">✅ Correct prediction:<br/>You gain exactly the amount you wagered.</p>
                 <p className="text-gray-300 text-sm mb-4">❌ Wrong prediction:<br/>You lose exactly the amount you wagered.</p>
                 <p className="text-gray-200 font-semibold mb-2">Example</p>
-                <p className="text-gray-300 text-sm mb-2">You have 42 points and wager 10.</p>
-                <p className="text-gray-300 text-sm mb-1">✅ Correct prediction:<br/>42 → 52 points</p>
-                <p className="text-gray-300 text-sm mb-4">❌ Wrong prediction:<br/>42 → 32 points</p>
-                <p className="text-gray-300 text-sm">After you've used all 3 wagers, you can still make normal knockout predictions for +3 points per correct pick.</p>
+                <p className="text-gray-300 text-sm mb-2">You have 124 points and wager all 124.</p>
+                <p className="text-gray-300 text-sm mb-1">✅ Correct prediction:<br/>124 → 248 points</p>
+                <p className="text-gray-300 text-sm mb-4">❌ Wrong prediction:<br/>124 → 0 points</p>
+                <p className="text-gray-300 text-sm">After using your wager in a round, you can still make normal knockout predictions for +3 points per correct pick.</p>
                 <p className="text-gray-300 text-sm mt-3">⚠️ Wagers cannot be changed after you submit your prediction.</p>
               </div>
             </div>
@@ -1968,66 +1977,72 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                         {/* Wager Step for Knockout Games */}
                         {isWagerEligibleRound(game) && !existingPrediction && !wagerStep.has(game.id) && (
                           <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4 mb-3">
-                            <p className="text-yellow-400 font-semibold text-sm mb-3">💰 Bet Your Points</p>
-                            <div className="flex items-center gap-2 mb-3">
-                              <input
-                                type="number"
-                                min="4"
-                                max={currentPlayer.points}
-                                value={wagerInput.get(game.id) || ''}
-                                onChange={(e) => {
-                                  const rawValue = e.target.value
-                                  // Handle empty input
-                                  if (rawValue === '') {
-                                    const newWagers = new Map(wagerInput)
-                                    newWagers.delete(game.id)
-                                    setWagerInput(newWagers)
-                                    return
-                                  }
-                                  // Remove leading zeros and validate
-                                  const numValue = parseInt(rawValue, 10)
-                                  if (!isNaN(numValue) && numValue >= 0) {
-                                    const newWagers = new Map(wagerInput)
-                                    newWagers.set(game.id, numValue)
-                                    setWagerInput(newWagers)
-                                  }
-                                }}
-                                placeholder="Enter wager amount"
-                                className="flex-1 bg-gray-900/50 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-500"
-                              />
-                              <span className="text-gray-400 text-sm">/ {currentPlayer.points} pts</span>
-                            </div>
-                            {currentPlayer.points < 4 && (
-                              <p className="text-red-400 text-xs mb-2">You need at least 4 points to wager.</p>
+                            {hasUsedWagerInRound(game.group) ? (
+                              <p className="text-gray-400 text-sm mb-3">You already used your {game.group} wager.</p>
+                            ) : (
+                              <>
+                                <p className="text-yellow-400 font-semibold text-sm mb-3">💰 Bet Your Points</p>
+                                <div className="flex items-center gap-2 mb-3">
+                                  <input
+                                    type="number"
+                                    min="4"
+                                    max={currentPlayer.points}
+                                    value={wagerInput.get(game.id) || ''}
+                                    onChange={(e) => {
+                                      const rawValue = e.target.value
+                                      // Handle empty input
+                                      if (rawValue === '') {
+                                        const newWagers = new Map(wagerInput)
+                                        newWagers.delete(game.id)
+                                        setWagerInput(newWagers)
+                                        return
+                                      }
+                                      // Remove leading zeros and validate
+                                      const numValue = parseInt(rawValue, 10)
+                                      if (!isNaN(numValue) && numValue >= 0) {
+                                        const newWagers = new Map(wagerInput)
+                                        newWagers.set(game.id, numValue)
+                                        setWagerInput(newWagers)
+                                      }
+                                    }}
+                                    placeholder="Enter wager amount"
+                                    className="flex-1 bg-gray-900/50 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-yellow-500"
+                                  />
+                                  <span className="text-gray-400 text-sm">/ {currentPlayer.points} pts</span>
+                                </div>
+                                {currentPlayer.points < 4 && (
+                                  <p className="text-red-400 text-xs mb-2">You need at least 4 points to wager.</p>
+                                )}
+                                <div className="flex gap-2">
+                                  <button
+                                    onClick={() => {
+                                      const wager = wagerInput.get(game.id) || 0
+                                      if (wager >= 4 && wager <= currentPlayer.points && !hasUsedWagerInRound(game.group)) {
+                                        setWagerAmount(new Map(wagerAmount.set(game.id, wager)))
+                                        setWagerStep(new Map(wagerStep.set(game.id, 'wager')))
+                                      }
+                                    }}
+                                    disabled={
+                                      (wagerInput.get(game.id) || 0) < 4 ||
+                                      (wagerInput.get(game.id) || 0) > currentPlayer.points ||
+                                      hasUsedWagerInRound(game.group) ||
+                                      currentPlayer.points < 4
+                                    }
+                                    className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-2 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                  >
+                                    Wager?
+                                  </button>
+                                  <button
+                                    onClick={() => {
+                                      setWagerStep(new Map(wagerStep.set(game.id, 'no_wager')))
+                                    }}
+                                    className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-2 rounded-lg font-medium transition-all"
+                                  >
+                                    No, continue to prediction
+                                  </button>
+                                </div>
+                              </>
                             )}
-                            <div className="flex gap-2">
-                              <button
-                                onClick={() => {
-                                  const wager = wagerInput.get(game.id) || 0
-                                  if (wager >= 4 && wager <= currentPlayer.points && (3 - wagersUsed) > 0) {
-                                    setWagerAmount(new Map(wagerAmount.set(game.id, wager)))
-                                    setWagerStep(new Map(wagerStep.set(game.id, 'wager')))
-                                  }
-                                }}
-                                disabled={
-                                  (wagerInput.get(game.id) || 0) < 4 ||
-                                  (wagerInput.get(game.id) || 0) > currentPlayer.points ||
-                                  (3 - wagersUsed) === 0 ||
-                                  currentPlayer.points < 4
-                                }
-                                className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-2 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                              >
-                                Wager?
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setWagerStep(new Map(wagerStep.set(game.id, 'no_wager')))
-                                }}
-                                className="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white py-2 rounded-lg font-medium transition-all"
-                              >
-                                No, continue to prediction
-                              </button>
-                            </div>
                           </div>
                         )}
 
