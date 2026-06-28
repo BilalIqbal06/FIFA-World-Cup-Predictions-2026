@@ -1406,6 +1406,8 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
   const [showLeaderboard, setShowLeaderboard] = useState(true)
   const [wagerStep, setWagerStep] = useState<Map<string, 'none' | 'wager' | 'no_wager'>>(new Map())
   const [wagerInput, setWagerInput] = useState<Map<string, number>>(new Map())
+  const [predictionSaved, setPredictionSaved] = useState<Map<string, boolean>>(new Map())
+  const [wagerSaved, setWagerSaved] = useState<Map<string, boolean>>(new Map())
 
   const getFlagCode = (id: string): string => {
   switch (id) {
@@ -1493,6 +1495,11 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
     // Send prediction to server for persistence and sync
     onPrediction(gameId, prediction, wager)
 
+    // Show prediction saved animation
+    const newSaved = new Map(predictionSaved)
+    newSaved.set(gameId, true)
+    setPredictionSaved(newSaved)
+
     // Clear wager and step after submission
     const newWagers = new Map(wagerAmount)
     newWagers.delete(gameId)
@@ -1505,6 +1512,24 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
     const newInputs = new Map(wagerInput)
     newInputs.delete(gameId)
     setWagerInput(newInputs)
+
+    // Show wager saved animation if wager > 0
+    if (wager > 0) {
+      const newWagerSaved = new Map(wagerSaved)
+      newWagerSaved.set(gameId, true)
+      setWagerSaved(newWagerSaved)
+    }
+
+    // Clear animations after 2 seconds
+    setTimeout(() => {
+      const clearedSaved = new Map(predictionSaved)
+      clearedSaved.delete(gameId)
+      setPredictionSaved(clearedSaved)
+
+      const clearedWagerSaved = new Map(wagerSaved)
+      clearedWagerSaved.delete(gameId)
+      setWagerSaved(clearedWagerSaved)
+    }, 2000)
   }
 
   // Format date for display
@@ -1722,10 +1747,8 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={`text-2xl font-bold ${
-                      index === 0 ? 'text-yellow-400' : index === 1 ? 'text-gray-300' : index === 2 ? 'text-orange-400' : 'text-gray-500'
-                    }`}>
-                      #{index + 1}
+                    <span className="text-2xl">
+                      {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
                     </span>
                     <span className={`text-lg font-semibold ${
                       player.username === currentPlayer.username ? 'text-yellow-400' : 'text-white'
@@ -1817,14 +1840,14 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                         isAvailable ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'
                       }`}>
-                        {isAvailable ? 'Open for Prediction' : 'Closed'}
+                        {isAvailable ? 'Open for Prediction' : 'Prediction Closed 🔒'}
                       </span>
                     </div>
                     
                     <div className="flex items-center justify-between mb-6">
-                      <div className="text-center flex-1">
-                        <img 
-                          src={`https://flagcdn.com/w80/${getFlagCode(game.homeTeam.id)}.png`} 
+                      <div className={`text-center flex-1 ${game.actualResult === 'home' ? 'ring-2 ring-green-400 ring-opacity-50 rounded-lg p-2 bg-green-500/10' : ''}`}>
+                        <img
+                          src={`https://flagcdn.com/w80/${getFlagCode(game.homeTeam.id)}.png`}
                           alt={game.homeTeam.name}
                           className="w-16 h-12 object-cover rounded-lg mx-auto mb-2 shadow-lg"
                           onError={(e) => {
@@ -1834,15 +1857,16 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                         />
                         <span className="text-4xl hidden">{game.homeTeam.flag}</span>
                         <p className="text-white font-bold text-lg">{game.homeTeam.name}</p>
+                        {game.actualResult === 'home' && <p className="text-green-400 text-sm mt-1">✓ Winner</p>}
                       </div>
-                      
+
                       <div className="text-center px-4">
                         <p className="text-blue-300 text-sm mb-1">{formatDate(game.date)}</p>
                         <p className="text-yellow-400 font-bold text-xl">{formatTime(game.date)}</p>
                       </div>
-                      
-                      <div className="text-center flex-1">
-                        <img 
+
+                      <div className={`text-center flex-1 ${game.actualResult === 'away' ? 'ring-2 ring-green-400 ring-opacity-50 rounded-lg p-2 bg-green-500/10' : ''}`}>
+                        <img
                           src={`https://flagcdn.com/w80/${getFlagCode(game.awayTeam.id)}.png`}
                           alt={game.awayTeam.name}
                           className="w-16 h-12 object-cover rounded-lg mx-auto mb-2 shadow-lg"
@@ -1853,6 +1877,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                         />
                         <span className="text-4xl hidden">{game.awayTeam.flag}</span>
                         <p className="text-white font-bold text-lg">{game.awayTeam.name}</p>
+                        {game.actualResult === 'away' && <p className="text-green-400 text-sm mt-1">✓ Winner</p>}
                       </div>
                     </div>
                     
@@ -1871,6 +1896,14 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
                             💰 Wager: {existingPrediction.wager} pts
                           </p>
                         )}
+                      </div>
+                    ) : predictionSaved.get(game.id) ? (
+                      <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-500/40 rounded-lg p-4 text-center animate-pulse">
+                        <p className="text-green-400 font-semibold mb-1">✓ Prediction Saved</p>
+                      </div>
+                    ) : wagerSaved.get(game.id) ? (
+                      <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4 text-center animate-pulse">
+                        <p className="text-yellow-400 font-semibold mb-1">💰 Wager Saved: {wagerAmount.get(game.id)} pts ✓</p>
                       </div>
                     ) : (
                       <div className="space-y-2">
