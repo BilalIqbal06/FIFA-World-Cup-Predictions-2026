@@ -1638,10 +1638,10 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
 
       {/* Rules Modal */}
       {showRules && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-gradient-to-br from-green-950 via-blue-950 to-red-950 rounded-2xl p-8 max-w-2xl w-full border border-yellow-500/30 shadow-2xl shadow-yellow-500/20">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-hidden">
+          <div className="bg-gradient-to-br from-green-950 via-blue-950 to-red-950 rounded-2xl p-8 max-w-2xl w-full border border-yellow-500/30 shadow-2xl shadow-yellow-500/20 max-h-[90vh] flex flex-col">
             <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-blue-400 to-red-400 mb-6">📋 Scoring Rules</h2>
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-y-auto flex-1 pr-2">
               <div className="bg-gradient-to-r from-green-500/20 to-green-600/20 border border-green-500/40 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-green-400 mb-2">🏆 Win Prediction</h3>
                 <p className="text-gray-200">If you pick a team to win and they win: <span className="text-yellow-400 font-bold">3 points</span></p>
