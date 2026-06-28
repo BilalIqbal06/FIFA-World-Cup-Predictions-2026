@@ -368,12 +368,6 @@ interface Game {
 
 // Official FIFA World Cup 2026 Schedule (June 11 - July 19, 2026)
 
-// TEMPORARY WAGER TEST MODE
-// Set to true to enable testing of knockout wager functionality before Round of 32
-// When enabled, Game 73 will be available for prediction immediately
-// After testing, set to false and redeploy
-const ENABLE_WAGER_TEST_MODE = true
-
 // Knockout participant mapping for easy updates
 const knockoutParticipants: Record<string, { name: string; flag: string; id: string }> = {
   // Known teams
@@ -399,6 +393,16 @@ const knockoutParticipants: Record<string, { name: string; flag: string; id: str
   eg: { name: 'Egypt', flag: '🇪🇬', id: 'eg' },
   ar: { name: 'Argentina', flag: '🇦🇷', id: 'ar' },
   cv: { name: 'Cabo Verde', flag: '🇨🇻', id: 'cv' },
+  ec: { name: 'Ecuador', flag: '🇪🇨', id: 'ec' },
+  en: { name: 'England', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', id: 'en' },
+  cd: { name: 'DR Congo', flag: '🇨🇩', id: 'cd' },
+  sn: { name: 'Senegal', flag: '🇸🇳', id: 'sn' },
+  at: { name: 'Austria', flag: '🇦🇹', id: 'at' },
+  pt: { name: 'Portugal', flag: '🇵🇹', id: 'pt' },
+  hr: { name: 'Croatia', flag: '🇭🇷', id: 'hr' },
+  dz: { name: 'Algeria', flag: '🇩🇿', id: 'dz' },
+  co: { name: 'Colombia', flag: '🇨🇴', id: 'co' },
+  gh: { name: 'Ghana', flag: '🇬🇭', id: 'gh' },
   // TBD placeholder
   tbd: { name: 'TBD', flag: '🏆', id: 'tbd' }
 }
@@ -1081,17 +1085,8 @@ export const sampleGames: Game[] = [
     id: '73',
     homeTeam: getKnockoutTeam('za'),
     awayTeam: getKnockoutTeam('ca'),
-    date: ENABLE_WAGER_TEST_MODE ? new Date(Date.now() + 86400000) : new Date('2026-06-28T15:00:00-04:00'),
+    date: new Date('2026-06-28T15:00:00-04:00'),
     venue: 'Inglewood',
-    group: 'Round of 32',
-    status: 'upcoming'
-  },
-  {
-    id: '76',
-    homeTeam: getKnockoutTeam('br'),
-    awayTeam: getKnockoutTeam('jp'),
-    date: new Date('2026-06-29T13:00:00-04:00'),
-    venue: 'Houston',
     group: 'Round of 32',
     status: 'upcoming'
   },
@@ -1110,6 +1105,15 @@ export const sampleGames: Game[] = [
     awayTeam: getKnockoutTeam('ma'),
     date: new Date('2026-06-29T21:00:00-04:00'),
     venue: 'Guadalupe',
+    group: 'Round of 32',
+    status: 'upcoming'
+  },
+  {
+    id: '76',
+    homeTeam: getKnockoutTeam('br'),
+    awayTeam: getKnockoutTeam('jp'),
+    date: new Date('2026-06-30T13:00:00-04:00'),
+    venue: 'Houston',
     group: 'Round of 32',
     status: 'upcoming'
   },
@@ -1134,7 +1138,7 @@ export const sampleGames: Game[] = [
   {
     id: '79',
     homeTeam: getKnockoutTeam('mx'),
-    awayTeam: getKnockoutTeam('tbd'),
+    awayTeam: getKnockoutTeam('ec'),
     date: new Date('2026-06-30T21:00:00-04:00'),
     venue: 'Mexico City',
     group: 'Round of 32',
@@ -1142,8 +1146,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '80',
-    homeTeam: getKnockoutTeam('tbd'),
-    awayTeam: getKnockoutTeam('tbd'),
+    homeTeam: getKnockoutTeam('en'),
+    awayTeam: getKnockoutTeam('cd'),
     date: new Date('2026-07-01T12:00:00-04:00'),
     venue: 'Atlanta',
     group: 'Round of 32',
@@ -1152,7 +1156,7 @@ export const sampleGames: Game[] = [
   {
     id: '81',
     homeTeam: getKnockoutTeam('be'),
-    awayTeam: getKnockoutTeam('tbd'),
+    awayTeam: getKnockoutTeam('sn'),
     date: new Date('2026-07-01T16:00:00-04:00'),
     venue: 'San Francisco Bay Area',
     group: 'Round of 32',
@@ -1170,7 +1174,7 @@ export const sampleGames: Game[] = [
   {
     id: '83',
     homeTeam: getKnockoutTeam('es'),
-    awayTeam: getKnockoutTeam('tbd'),
+    awayTeam: getKnockoutTeam('at'),
     date: new Date('2026-07-02T15:00:00-04:00'),
     venue: 'Toronto',
     group: 'Round of 32',
@@ -1178,8 +1182,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '84',
-    homeTeam: getKnockoutTeam('tbd'),
-    awayTeam: getKnockoutTeam('tbd'),
+    homeTeam: getKnockoutTeam('pt'),
+    awayTeam: getKnockoutTeam('hr'),
     date: new Date('2026-07-02T19:00:00-04:00'),
     venue: 'Los Angeles',
     group: 'Round of 32',
@@ -1188,14 +1192,14 @@ export const sampleGames: Game[] = [
   {
     id: '85',
     homeTeam: getKnockoutTeam('ch'),
-    awayTeam: getKnockoutTeam('tbd'),
+    awayTeam: getKnockoutTeam('dz'),
     date: new Date('2026-07-02T23:00:00-04:00'),
     venue: 'Vancouver',
     group: 'Round of 32',
     status: 'upcoming'
   },
   {
-    id: '88',
+    id: '86',
     homeTeam: getKnockoutTeam('au'),
     awayTeam: getKnockoutTeam('eg'),
     date: new Date('2026-07-03T14:00:00-04:00'),
@@ -1204,7 +1208,7 @@ export const sampleGames: Game[] = [
     status: 'upcoming'
   },
   {
-    id: '86',
+    id: '87',
     homeTeam: getKnockoutTeam('ar'),
     awayTeam: getKnockoutTeam('cv'),
     date: new Date('2026-07-03T18:00:00-04:00'),
@@ -1213,9 +1217,9 @@ export const sampleGames: Game[] = [
     status: 'upcoming'
   },
   {
-    id: '87',
-    homeTeam: getKnockoutTeam('tbd'),
-    awayTeam: getKnockoutTeam('tbd'),
+    id: '88',
+    homeTeam: getKnockoutTeam('co'),
+    awayTeam: getKnockoutTeam('gh'),
     date: new Date('2026-07-03T21:30:00-04:00'),
     venue: 'Kansas City',
     group: 'Round of 32',
@@ -1448,7 +1452,12 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, w
       return now < gameDate && game.status === 'upcoming'
     }
     
-    // Knockout stage games: day before rule
+    // Round of 32: open immediately for now (temporary rule)
+    if (game.group === 'Round of 32') {
+      return game.status === 'upcoming'
+    }
+    
+    // Other knockout stage games: day before rule
     const predictionOpenDate = new Date(gameDate)
     predictionOpenDate.setDate(predictionOpenDate.getDate() - 1)
     predictionOpenDate.setHours(0, 0, 0, 0)
