@@ -1091,6 +1091,15 @@ export const sampleGames: Game[] = [
     status: 'upcoming'
   },
   {
+    id: '76',
+    homeTeam: getKnockoutTeam('br'),
+    awayTeam: getKnockoutTeam('jp'),
+    date: new Date('2026-06-29T13:00:00-04:00'),
+    venue: 'Houston',
+    group: 'Round of 32',
+    status: 'upcoming'
+  },
+  {
     id: '74',
     homeTeam: getKnockoutTeam('de'),
     awayTeam: getKnockoutTeam('py'),
@@ -1105,15 +1114,6 @@ export const sampleGames: Game[] = [
     awayTeam: getKnockoutTeam('ma'),
     date: new Date('2026-06-29T21:00:00-04:00'),
     venue: 'Guadalupe',
-    group: 'Round of 32',
-    status: 'upcoming'
-  },
-  {
-    id: '76',
-    homeTeam: getKnockoutTeam('br'),
-    awayTeam: getKnockoutTeam('jp'),
-    date: new Date('2026-06-30T13:00:00-04:00'),
-    venue: 'Houston',
     group: 'Round of 32',
     status: 'upcoming'
   },
