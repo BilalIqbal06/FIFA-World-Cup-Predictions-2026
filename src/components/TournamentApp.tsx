@@ -273,6 +273,42 @@ export default function TournamentApp() {
   const handlePrediction = async (gameId: string, prediction: string, wager?: number) => {
     if (!currentPlayer) return
 
+    // Validate wager: prevent duplicate round wagers
+    if (wager && wager > 0) {
+      const gameIdNum = parseInt(gameId, 10)
+      let rangeStart: number, rangeEnd: number
+
+      // Define wager groups by game ID ranges
+      if (gameIdNum >= 73 && gameIdNum <= 88) {
+        rangeStart = 73
+        rangeEnd = 88
+      } else if (gameIdNum >= 89 && gameIdNum <= 96) {
+        rangeStart = 89
+        rangeEnd = 96
+      } else if (gameIdNum >= 97 && gameIdNum <= 102) {
+        rangeStart = 97
+        rangeEnd = 102
+      } else {
+        // Not in a wager-eligible range, allow the wager
+        rangeStart = -1
+        rangeEnd = -1
+      }
+
+      // Check if player already has a wager in this range
+      if (rangeStart !== -1) {
+        const hasExistingWager = Array.from(predictions.values()).some(pred => {
+          const predGameIdNum = parseInt(pred.gameId, 10)
+          return predGameIdNum >= rangeStart && predGameIdNum <= rangeEnd && pred.wager && pred.wager > 0
+        })
+
+        if (hasExistingWager) {
+          console.error('❌ Player already has a wager in this round')
+          alert('You already used your wager for this round. Please make a normal prediction instead.')
+          return
+        }
+      }
+    }
+
     try {
       await supabaseService.savePrediction(playerCode, gameId, prediction, wager)
       loadAllPlayers()

@@ -2076,7 +2076,17 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
                         {isWagerEligibleRound(game) && !existingPrediction && !wagerStep.has(game.id) && (
                           <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4 mb-3">
                             {hasUsedWagerInRange(game.id) ? (
-                              <p className="text-gray-400 text-sm mb-3">You already used your wager for this round.</p>
+                              <>
+                                <p className="text-gray-400 text-sm mb-3">Round wager already used — normal prediction still available.</p>
+                                <button
+                                  onClick={() => {
+                                    setWagerStep(new Map(wagerStep.set(game.id, 'no_wager')))
+                                  }}
+                                  className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white py-2 rounded-lg font-medium transition-all"
+                                >
+                                  Make Normal Prediction
+                                </button>
+                              </>
                             ) : (
                               <>
                                 <p className="text-yellow-400 font-semibold text-sm mb-3">💰 Bet Your Points</p>
