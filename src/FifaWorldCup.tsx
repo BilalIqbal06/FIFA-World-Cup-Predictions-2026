@@ -1838,7 +1838,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
                 return (
                   <div
                     key={player.username}
-                    className={`leaderboard-row flex items-center justify-between bg-gray-800/50 rounded-xl p-4 border-2 ${
+                    className={`leaderboard-row grid grid-cols-[auto_1fr_120px_auto] items-center gap-4 bg-gray-800/50 rounded-xl p-4 border-2 ${
                       player.username === currentPlayer.username
                         ? 'border-yellow-500/50'
                         : 'border-gray-700/50'
@@ -1854,16 +1854,20 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
                         {player.username}
                       </span>
                     </div>
-                    {todayResults.length > 0 && (
-                      <div className="flex gap-1">
-                        {todayResults.map((result, idx) => (
-                          <span key={idx} className={`text-sm font-medium ${result.color}`}>
-                            {result.value}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    <span className="text-2xl font-bold text-green-400">{player.points} pts</span>
+                    <div className="flex justify-center">
+                      {todayResults.length > 0 ? (
+                        <div className="flex gap-1">
+                          {todayResults.map((result, idx) => (
+                            <span key={idx} className={`text-sm font-medium ${result.color}`}>
+                              {result.value}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-sm text-gray-500">—</span>
+                      )}
+                    </div>
+                    <span className="text-2xl font-bold text-green-400 text-right">{player.points} pts</span>
                   </div>
                 )
               })}
