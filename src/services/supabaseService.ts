@@ -192,14 +192,24 @@ export const supabaseService = {
       return []
     }
 
+    // Use RPC function to get public predictions (bypasses RLS restrictions)
     const { data, error } = await supabase
-      .from('predictions')
-      .select('game_id, prediction, wager, players(username)')
-      .in('game_id', gameIds)
+      .rpc('get_public_predictions', { p_game_ids: gameIds })
 
     if (error) {
       console.error('❌ Failed to get predictions for games:', error)
-      throw error
+      // Fall back to direct query if RPC doesn't exist (for backward compatibility)
+      const { data: fallbackData, error: fallbackError } = await supabase
+        .from('predictions')
+        .select('game_id, prediction, wager, players(username)')
+        .in('game_id', gameIds)
+
+      if (fallbackError) {
+        console.error('❌ Fallback query also failed:', fallbackError)
+        return []
+      }
+
+      return fallbackData || []
     }
 
     return data || []
