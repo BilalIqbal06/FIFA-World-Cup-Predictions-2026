@@ -1442,11 +1442,32 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
     return eligibleRounds.includes(game.group)
   }
 
-  // Check if player has already used a wager in a specific round
-  const hasUsedWagerInRound = (round: string): boolean => {
+  // Check if player has already used a wager in a specific game ID range
+  const hasUsedWagerInRange = (gameId: string): boolean => {
+    const gameIdNum = parseInt(gameId, 10)
+    let rangeStart: number, rangeEnd: number
+
+    // Define wager groups by game ID ranges
+    if (gameIdNum >= 73 && gameIdNum <= 88) {
+      // Round of 32: games 73-88
+      rangeStart = 73
+      rangeEnd = 88
+    } else if (gameIdNum >= 89 && gameIdNum <= 96) {
+      // Round of 16: games 89-96
+      rangeStart = 89
+      rangeEnd = 96
+    } else if (gameIdNum >= 97 && gameIdNum <= 102) {
+      // Quarterfinals + Semifinals combined: games 97-102
+      rangeStart = 97
+      rangeEnd = 102
+    } else {
+      return false // Not in a wager-eligible range
+    }
+
+    // Check if any wager exists in this range
     return Array.from(predictions.values()).some(pred => {
-      const game = games.find(g => g.id === pred.gameId)
-      return game && game.group === round && pred.wager > 0
+      const predGameIdNum = parseInt(pred.gameId, 10)
+      return predGameIdNum >= rangeStart && predGameIdNum <= rangeEnd && pred.wager > 0
     })
   }
 
@@ -1630,9 +1651,21 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
             
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/50 rounded-lg px-4 py-2">
-                <span className="text-sm text-yellow-200">Round of 32 Wager:</span>
-                <span className={`text-2xl font-bold ${hasUsedWagerInRound('Round of 32') ? 'text-gray-400' : 'text-yellow-400'}`}>
-                  {hasUsedWagerInRound('Round of 32') ? 'Used' : 'Available'}
+                <span className="text-sm text-yellow-200">R32 Wager:</span>
+                <span className={`text-2xl font-bold ${hasUsedWagerInRange('73') ? 'text-gray-400' : 'text-yellow-400'}`}>
+                  {hasUsedWagerInRange('73') ? 'Used' : 'Available'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/50 rounded-lg px-4 py-2">
+                <span className="text-sm text-yellow-200">R16 Wager:</span>
+                <span className={`text-2xl font-bold ${hasUsedWagerInRange('89') ? 'text-gray-400' : 'text-yellow-400'}`}>
+                  {hasUsedWagerInRange('89') ? 'Used' : 'Available'}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/50 rounded-lg px-4 py-2">
+                <span className="text-sm text-yellow-200">QF+SF Wager:</span>
+                <span className={`text-2xl font-bold ${hasUsedWagerInRange('97') ? 'text-gray-400' : 'text-yellow-400'}`}>
+                  {hasUsedWagerInRange('97') ? 'Used' : 'Available'}
                 </span>
               </div>
               <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/50 rounded-lg px-4 py-2">
@@ -1678,12 +1711,11 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
               </div>
               <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-yellow-400 mb-3">💰 Betting (Knockout Rounds Only)</h3>
-                <p className="text-gray-200 mb-2">Available during:</p>
-                <p className="text-gray-300 text-sm mb-4">• Round of 32<br/>• Round of 16<br/>• Quarterfinals<br/>• Semifinals</p>
-                <p className="text-gray-200 mb-2">Each player gets exactly <span className="text-white font-bold">1 wager per round</span>.</p>
-                <p className="text-gray-200 mb-4">For every knockout match, you can either:<br/>• Make a normal prediction (no risk)<br/>• Use your round's wager (high risk, high reward)</p>
+                <p className="text-gray-200 mb-2">Each player gets <span className="text-white font-bold">3 total wagers</span> distributed as:</p>
+                <p className="text-gray-300 text-sm mb-4">• Round of 32: 1 wager<br/>• Round of 16: 1 wager<br/>• Quarterfinals + Semifinals: 1 wager combined</p>
+                <p className="text-gray-200 mb-4">For every knockout match, you can either:<br/>• Make a normal prediction (no risk)<br/>• Use your wager for that round (high risk, high reward)</p>
                 <p className="text-gray-200 font-semibold mb-2">Wager Rules</p>
-                <p className="text-gray-300 text-sm mb-4">• Minimum wager: 4 points<br/>• Maximum wager: Your current total points<br/>• You can only wager once per round (wagers don't carry over)</p>
+                <p className="text-gray-300 text-sm mb-4">• Minimum wager: 4 points<br/>• Maximum wager: Your current total points<br/>• You can only wager once per wager group<br/>• No wagers in Third Place or Final</p>
                 <p className="text-gray-200 font-semibold mb-2">📈 If You DON'T Wager</p>
                 <p className="text-gray-300 text-sm mb-1">✅ Correct prediction:<br/>+3 points</p>
                 <p className="text-gray-300 text-sm mb-4">❌ Wrong prediction:<br/>0 points</p>
@@ -1694,7 +1726,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
                 <p className="text-gray-300 text-sm mb-2">You have 124 points and wager all 124.</p>
                 <p className="text-gray-300 text-sm mb-1">✅ Correct prediction:<br/>124 → 248 points</p>
                 <p className="text-gray-300 text-sm mb-4">❌ Wrong prediction:<br/>124 → 0 points</p>
-                <p className="text-gray-300 text-sm">After using your wager in a round, you can still make normal knockout predictions for +3 points per correct pick.</p>
+                <p className="text-gray-300 text-sm">After using your wager in a group, you can still make normal knockout predictions for +3 points per correct pick.</p>
                 <p className="text-gray-300 text-sm mt-3">⚠️ Wagers cannot be changed after you submit your prediction.</p>
               </div>
             </div>
@@ -1977,8 +2009,8 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
                         {/* Wager Step for Knockout Games */}
                         {isWagerEligibleRound(game) && !existingPrediction && !wagerStep.has(game.id) && (
                           <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4 mb-3">
-                            {hasUsedWagerInRound(game.group) ? (
-                              <p className="text-gray-400 text-sm mb-3">You already used your {game.group} wager.</p>
+                            {hasUsedWagerInRange(game.id) ? (
+                              <p className="text-gray-400 text-sm mb-3">You already used your wager for this round.</p>
                             ) : (
                               <>
                                 <p className="text-yellow-400 font-semibold text-sm mb-3">💰 Bet Your Points</p>
@@ -2017,7 +2049,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
                                   <button
                                     onClick={() => {
                                       const wager = wagerInput.get(game.id) || 0
-                                      if (wager >= 4 && wager <= currentPlayer.points && !hasUsedWagerInRound(game.group)) {
+                                      if (wager >= 4 && wager <= currentPlayer.points && !hasUsedWagerInRange(game.id)) {
                                         setWagerAmount(new Map(wagerAmount.set(game.id, wager)))
                                         setWagerStep(new Map(wagerStep.set(game.id, 'wager')))
                                       }
@@ -2025,7 +2057,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
                                     disabled={
                                       (wagerInput.get(game.id) || 0) < 4 ||
                                       (wagerInput.get(game.id) || 0) > currentPlayer.points ||
-                                      hasUsedWagerInRound(game.group) ||
+                                      hasUsedWagerInRange(game.id) ||
                                       currentPlayer.points < 4
                                     }
                                     className="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-2 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed"
