@@ -198,18 +198,7 @@ export const supabaseService = {
 
     if (error) {
       console.error('❌ Failed to get predictions for games:', error)
-      // Fall back to direct query if RPC doesn't exist (for backward compatibility)
-      const { data: fallbackData, error: fallbackError } = await supabase
-        .from('predictions')
-        .select('game_id, prediction, wager, players(username)')
-        .in('game_id', gameIds)
-
-      if (fallbackError) {
-        console.error('❌ Fallback query also failed:', fallbackError)
-        return []
-      }
-
-      return fallbackData || []
+      return []
     }
 
     return data || []

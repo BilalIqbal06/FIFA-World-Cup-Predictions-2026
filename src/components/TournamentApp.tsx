@@ -179,8 +179,8 @@ export default function TournamentApp() {
 
       allPredictionsData.forEach((pred: any) => {
         const gameId = String(pred.game_id)
-        // Handle both RPC response (username directly) and fallback (players.username)
-        const username = pred.username || pred.players?.username
+        // RPC returns username directly
+        const username = pred.username
 
         if (!username) return
 
@@ -198,6 +198,8 @@ export default function TournamentApp() {
       setAllPredictions(allPredictionsMap)
     } catch (err) {
       console.error('❌ Failed to load all predictions for finished games:', err)
+      // Don't block the app if public predictions fail to load
+      setAllPredictions(new Map())
     }
   }
 
