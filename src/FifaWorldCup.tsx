@@ -1848,23 +1848,21 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
                       <span className="text-2xl">
                         {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
                       </span>
-                      <div className="flex flex-col">
-                        <span className={`text-lg font-semibold ${
-                          player.username === currentPlayer.username ? 'text-yellow-400' : 'text-white'
-                        }`}>
-                          {player.username}
-                        </span>
-                        {todayResults.length > 0 && (
-                          <div className="flex gap-1 mt-1">
-                            {todayResults.map((result, idx) => (
-                              <span key={idx} className={`text-xs font-medium ${result.color}`}>
-                                {result.value}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                      <span className={`text-lg font-semibold ${
+                        player.username === currentPlayer.username ? 'text-yellow-400' : 'text-white'
+                      }`}>
+                        {player.username}
+                      </span>
                     </div>
+                    {todayResults.length > 0 && (
+                      <div className="flex gap-1">
+                        {todayResults.map((result, idx) => (
+                          <span key={idx} className={`text-sm font-medium ${result.color}`}>
+                            {result.value}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     <span className="text-2xl font-bold text-green-400">{player.points} pts</span>
                   </div>
                 )

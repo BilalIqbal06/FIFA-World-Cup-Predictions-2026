@@ -166,16 +166,21 @@ export default function TournamentApp() {
         .filter((g: any) => g.status === 'finished')
         .map((g: any) => g.id)
 
+      console.log('🔍 Loading predictions for finished games:', finishedGameIds)
+
       if (finishedGameIds.length === 0) {
         return
       }
 
       const allPredictionsData = await supabaseService.getPredictionsForGames(finishedGameIds)
+      console.log('📊 Received predictions data:', allPredictionsData.length, 'predictions')
+
       const allPredictionsMap = new Map<string, Map<string, any>>()
 
       allPredictionsData.forEach((pred: any) => {
         const gameId = String(pred.game_id)
-        const username = pred.players?.username
+        // Handle both RPC response (username directly) and fallback (players.username)
+        const username = pred.username || pred.players?.username
 
         if (!username) return
 
@@ -189,6 +194,7 @@ export default function TournamentApp() {
         })
       })
 
+      console.log('📋 Built allPredictionsMap with', allPredictionsMap.size, 'games')
       setAllPredictions(allPredictionsMap)
     } catch (err) {
       console.error('❌ Failed to load all predictions for finished games:', err)
