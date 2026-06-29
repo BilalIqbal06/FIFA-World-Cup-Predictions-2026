@@ -61,6 +61,7 @@ export default function TournamentApp() {
   const [isLoading, setIsLoading] = useState(true)
   const [predictions, setPredictions] = useState<Map<string, any>>(new Map())
   const [predictionsLoading, setPredictionsLoading] = useState(true)
+  const [allPredictions, setAllPredictions] = useState<Map<string, Map<string, any>>>(new Map())
 
   // Load persisted state on mount with retry logic
   useEffect(() => {
@@ -80,6 +81,7 @@ export default function TournamentApp() {
             setPlayerCode(storedPlayerCode)
             loadAllPlayers()
             loadPredictions(storedPlayerCode)
+            loadAllPredictionsForFinishedGames()
             setCurrentScreen(storedScreen || 'tournament')
           } else {
             // Player not found, go to welcome screen
@@ -152,6 +154,44 @@ export default function TournamentApp() {
       setPredictions(new Map()) // Set empty predictions on error
     } finally {
       setPredictionsLoading(false)
+    }
+  }
+
+  // Load all predictions for finished games (for leaderboard display)
+  const loadAllPredictionsForFinishedGames = async () => {
+    try {
+      // Import sampleGames to get finished game IDs
+      const { sampleGames } = await import('../FifaWorldCup')
+      const finishedGameIds = sampleGames
+        .filter((g: any) => g.status === 'finished')
+        .map((g: any) => g.id)
+
+      if (finishedGameIds.length === 0) {
+        return
+      }
+
+      const allPredictionsData = await supabaseService.getPredictionsForGames(finishedGameIds)
+      const allPredictionsMap = new Map<string, Map<string, any>>()
+
+      allPredictionsData.forEach((pred: any) => {
+        const gameId = String(pred.game_id)
+        const username = pred.players?.username
+
+        if (!username) return
+
+        if (!allPredictionsMap.has(gameId)) {
+          allPredictionsMap.set(gameId, new Map())
+        }
+
+        allPredictionsMap.get(gameId)!.set(username, {
+          prediction: pred.prediction,
+          wager: pred.wager
+        })
+      })
+
+      setAllPredictions(allPredictionsMap)
+    } catch (err) {
+      console.error('❌ Failed to load all predictions for finished games:', err)
     }
   }
 
@@ -354,6 +394,7 @@ export default function TournamentApp() {
             currentPlayer={currentPlayer}
             allPlayers={allPlayers}
             predictions={predictions}
+            allPredictions={allPredictions}
             onPlaceBet={handlePlaceBet}
             onPrediction={(gameId, prediction, wager) => handlePrediction(gameId, prediction, wager)}
           />

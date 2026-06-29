@@ -173,15 +173,35 @@ export const supabaseService = {
       console.error('❌ Supabase not configured, returning empty predictions')
       return []
     }
-    
+
     const { data, error } = await supabase
       .rpc('get_player_predictions', { p_player_code: playerCode })
-    
+
     if (error) {
       console.error('❌ RPC get_player_predictions failed:', error)
       throw error
     }
     
+    return data || []
+  },
+
+  // Get all predictions for specific games (for leaderboard display)
+  async getPredictionsForGames(gameIds: string[]) {
+    if (!supabase) {
+      console.error('❌ Supabase not configured, returning empty predictions')
+      return []
+    }
+
+    const { data, error } = await supabase
+      .from('predictions')
+      .select('game_id, prediction, wager, players(username)')
+      .in('game_id', gameIds)
+
+    if (error) {
+      console.error('❌ Failed to get predictions for games:', error)
+      throw error
+    }
+
     return data || []
   },
 

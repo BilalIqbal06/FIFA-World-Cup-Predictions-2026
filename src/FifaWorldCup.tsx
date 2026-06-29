@@ -1385,11 +1385,12 @@ interface FifaWorldCupProps {
   currentPlayer: Player
   allPlayers: Player[]
   predictions: Map<string, any>
+  allPredictions?: Map<string, Map<string, any>> // gameId -> playerUsername -> prediction
   onPlaceBet: (teamId: string, teamName: string) => void
   onPrediction: (gameId: string, prediction: string, wager?: number) => Promise<void>
 }
 
-export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, onPlaceBet, onPrediction }: FifaWorldCupProps) {
+export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, allPredictions, onPlaceBet, onPrediction }: FifaWorldCupProps) {
   // Add defensive checks
   if (!currentPlayer) {
     return (
@@ -1435,6 +1436,55 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
   const leaderboard = allPlayers
     .map(player => ({ username: player.username, points: player.points }))
     .sort((a, b) => b.points - a.points)
+
+  // Get today's finished games (games with status 'finished')
+  const todayFinishedGames = games.filter(game => game.status === 'finished')
+
+  // Calculate today's results for a specific player
+  const getTodayResults = (playerUsername: string) => {
+    const results: Array<{ value: string; color: string }> = []
+
+    todayFinishedGames.forEach(game => {
+      // Find this player's prediction for this game
+      let pred = null
+
+      if (allPredictions && allPredictions.has(game.id) && allPredictions.get(game.id)?.has(playerUsername)) {
+        // Use allPredictions if available (for all players)
+        pred = allPredictions.get(game.id)?.get(playerUsername)
+      } else if (playerUsername === currentPlayer.username) {
+        // Fall back to current player's predictions
+        const playerPrediction = Array.from(predictions.entries()).find(
+          ([gameId]) => gameId === game.id
+        )
+        pred = playerPrediction?.[1]
+      }
+
+      if (!pred) {
+        // No prediction - show blank
+        return
+      }
+
+      const isCorrect = pred.prediction === game.actualResult
+      const hasWager = pred.wager && pred.wager > 0
+
+      if (hasWager) {
+        if (isCorrect) {
+          results.push({ value: `+${pred.wager}`, color: 'text-blue-400' })
+        } else {
+          results.push({ value: `-${pred.wager}`, color: 'text-red-400' })
+        }
+      } else {
+        if (isCorrect) {
+          results.push({ value: '+3', color: 'text-green-400' })
+        } else {
+          results.push({ value: '+0', color: 'text-red-400' })
+        }
+      }
+    })
+
+    return results
+  }
+
 
   // Check if a game is in a wager-eligible round
   const isWagerEligibleRound = (game: Game): boolean => {
@@ -1783,28 +1833,42 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, o
           </div>
           {showLeaderboard && (
             <div className="space-y-2">
-              {leaderboard.map((player, index) => (
-                <div
-                  key={player.username}
-                  className={`leaderboard-row flex items-center justify-between bg-gray-800/50 rounded-xl p-4 border-2 ${
-                    player.username === currentPlayer.username
-                      ? 'border-yellow-500/50'
-                      : 'border-gray-700/50'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">
-                      {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
-                    </span>
-                    <span className={`text-lg font-semibold ${
-                      player.username === currentPlayer.username ? 'text-yellow-400' : 'text-white'
-                    }`}>
-                      {player.username}
-                    </span>
+              {leaderboard.map((player, index) => {
+                const todayResults = getTodayResults(player.username)
+                return (
+                  <div
+                    key={player.username}
+                    className={`leaderboard-row flex items-center justify-between bg-gray-800/50 rounded-xl p-4 border-2 ${
+                      player.username === currentPlayer.username
+                        ? 'border-yellow-500/50'
+                        : 'border-gray-700/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-2xl">
+                        {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${index + 1}`}
+                      </span>
+                      <div className="flex flex-col">
+                        <span className={`text-lg font-semibold ${
+                          player.username === currentPlayer.username ? 'text-yellow-400' : 'text-white'
+                        }`}>
+                          {player.username}
+                        </span>
+                        {todayResults.length > 0 && (
+                          <div className="flex gap-1 mt-1">
+                            {todayResults.map((result, idx) => (
+                              <span key={idx} className={`text-xs font-medium ${result.color}`}>
+                                {result.value}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-2xl font-bold text-green-400">{player.points} pts</span>
                   </div>
-                  <span className="text-2xl font-bold text-green-400">{player.points} pts</span>
-                </div>
-              ))}
+                )
+              })}
             </div>
           )}
         </div>
