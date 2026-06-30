@@ -1439,6 +1439,11 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
 
   // Calculate today's results for a specific player
   const getTodayResults = (playerUsername: string, scoredGames: Game[]) => {
+    console.log("getTodayResults called", playerUsername, selectedDate.toDateString())
+
+    // TEMPORARY: Return TEST for every player to verify code path
+    return [{ value: 'TEST', color: 'text-yellow-400' }]
+
     // Manual patch for June 29, 2026
     const isJune29 = selectedDate.toDateString() === new Date('2026-06-29').toDateString()
     if (isJune29) {
