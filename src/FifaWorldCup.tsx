@@ -1437,29 +1437,11 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
     .map(player => ({ username: player.username, points: player.points }))
     .sort((a, b) => b.points - a.points)
 
-  // Get today's scored games (games with actualResult set, meaning they've been processed)
-  const todayScoredGames = games
-    .filter(game => {
-      if (game.actualResult === undefined || game.actualResult === null) {
-        return false
-      }
-
-      // Normalize dates to midnight for comparison (same logic as getAvailableGamesForDate)
-      const gameDate = new Date(game.date)
-      gameDate.setHours(0, 0, 0, 0)
-
-      const checkDate = new Date(selectedDate)
-      checkDate.setHours(0, 0, 0, 0)
-
-      return gameDate.getTime() === checkDate.getTime()
-    })
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-
   // Calculate today's results for a specific player
-  const getTodayResults = (playerUsername: string) => {
+  const getTodayResults = (playerUsername: string, scoredGames: Game[]) => {
     const results: Array<{ value: string; color: string }> = []
 
-    todayScoredGames.forEach(game => {
+    scoredGames.forEach(game => {
       // Find this player's prediction for this game
       let pred = null
 
@@ -1651,6 +1633,11 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
 
   // Get games for selected date
   const gamesForSelectedDate = getAvailableGamesForDate(selectedDate)
+
+  // Get today's scored games from the selected date's games (same as "Games Available for Prediction")
+  const todayScoredGames = gamesForSelectedDate
+    .filter(game => game.actualResult !== undefined && game.actualResult !== null)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
   // Get all games grouped by date
   const gamesByDate = games.reduce((acc, game) => {
@@ -1849,7 +1836,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
           {showLeaderboard && (
             <div className="space-y-2">
               {leaderboard.map((player, index) => {
-                const todayResults = getTodayResults(player.username)
+                const todayResults = getTodayResults(player.username, todayScoredGames)
                 return (
                   <div
                     key={player.username}
