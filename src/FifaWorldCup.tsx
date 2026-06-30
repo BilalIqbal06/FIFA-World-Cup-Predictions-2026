@@ -1102,7 +1102,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-06-29T13:00:00-04:00'),
     venue: 'Houston',
     group: 'Round of 32',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'home',
+    homeScore: 2,
+    awayScore: 1
   },
   {
     id: '74',
@@ -1111,7 +1114,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-06-29T16:30:00-04:00'),
     venue: 'Boston',
     group: 'Round of 32',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'away',
+    homeScore: 2,
+    awayScore: 4
   },
   {
     id: '75',
@@ -1120,7 +1126,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-06-29T21:00:00-04:00'),
     venue: 'Guadalupe',
     group: 'Round of 32',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'away',
+    homeScore: 1,
+    awayScore: 2
   },
   {
     id: '77',
@@ -1439,7 +1448,6 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
 
   // Calculate today's results for a specific player
   const getTodayResults = (playerUsername: string, scoredGames: Game[]) => {
-    console.log("getTodayResults called for", playerUsername, "with", scoredGames.length, "scored games:", scoredGames.map(g => g.id))
     const results: Array<{ value: string; color: string }> = []
 
     scoredGames.forEach(game => {
@@ -1635,27 +1643,10 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
   // Get games for selected date
   const gamesForSelectedDate = getAvailableGamesForDate(selectedDate)
 
-  console.log("All games:", games.length)
-
-  console.log(
-    "Finished games:",
-    games
-      .filter(g => g.actualResult != null)
-      .map(g => ({
-        id: g.id,
-        home: g.homeTeam.name,
-        away: g.awayTeam.name,
-        result: g.actualResult,
-        date: g.date
-      }))
-  )
-
   // Get today's scored games from the selected date's games (same as "Games Available for Prediction")
   let todayScoredGames = gamesForSelectedDate
     .filter(game => game.actualResult !== undefined && game.actualResult !== null)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-
-  console.log("Initial todayScoredGames from selected date:", todayScoredGames.length, todayScoredGames.map(g => g.id))
 
   // If no games scored on selected date, fall back to most recent date with scored games
   if (todayScoredGames.length === 0) {
@@ -1663,14 +1654,10 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
       .filter(game => game.actualResult !== undefined && game.actualResult !== null)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort descending
 
-    console.log("All scored games (descending):", allScoredGames.length, allScoredGames.map(g => ({ id: g.id, date: g.date })))
-
     if (allScoredGames.length > 0) {
       // Get the most recent scored date
       const mostRecentScoredDate = new Date(allScoredGames[0].date)
       mostRecentScoredDate.setHours(0, 0, 0, 0)
-
-      console.log("Most recent scored date:", mostRecentScoredDate.toDateString())
 
       // Get all games from that date
       todayScoredGames = games
@@ -1682,12 +1669,8 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
                  game.actualResult !== null
         })
         .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-
-      console.log("Games selected for results (fallback):", todayScoredGames.length, todayScoredGames.map(g => g.id))
     }
   }
-
-  console.log("Final todayScoredGames:", todayScoredGames.length, todayScoredGames.map(g => g.id))
 
   // Get all games grouped by date
   const gamesByDate = games.reduce((acc, game) => {
