@@ -1490,9 +1490,11 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
         ]
       }
 
+      // Return manual results if username matches, otherwise return empty array (don't fall through)
       if (manualResults[playerUsername]) {
         return manualResults[playerUsername]
       }
+      return []
     }
 
     const results: Array<{ value: string; color: string }> = []
@@ -1888,6 +1890,10 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
             >
               {showLeaderboard ? 'Hide' : 'Show'}
             </button>
+          </div>
+          {/* Debug line */}
+          <div className="text-xs text-yellow-400 mb-2">
+            selectedDate = {selectedDate.toDateString()} | usingManualPatch = {selectedDate.toDateString() === new Date('2026-06-29').toDateString() ? 'true' : 'false'}
           </div>
           {showLeaderboard && (
             <div className="space-y-2">
