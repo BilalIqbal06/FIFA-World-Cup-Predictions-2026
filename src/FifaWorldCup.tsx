@@ -1439,6 +1439,62 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
 
   // Calculate today's results for a specific player
   const getTodayResults = (playerUsername: string, scoredGames: Game[]) => {
+    // Manual patch for June 29, 2026
+    const isJune29 = selectedDate.toDateString() === new Date('2026-06-29').toDateString()
+    if (isJune29) {
+      const manualResults: Record<string, Array<{ value: string; color: string }>> = {
+        'DUALAPEEP': [
+          { value: '+130', color: 'text-blue-400' },
+          { value: '+0', color: 'text-red-400' },
+          { value: '+3', color: 'text-green-400' }
+        ],
+        'Bhai': [
+          { value: '+3', color: 'text-green-400' },
+          { value: '+0', color: 'text-red-400' },
+          { value: '+3', color: 'text-green-400' }
+        ],
+        'hilla billa': [
+          { value: '+3', color: 'text-green-400' },
+          { value: '+0', color: 'text-red-400' },
+          { value: '+0', color: 'text-red-400' }
+        ],
+        'faruk bhai': [
+          { value: '+3', color: 'text-green-400' },
+          { value: '+0', color: 'text-red-400' },
+          { value: '+3', color: 'text-green-400' }
+        ],
+        'ZarrishZia': [
+          { value: '+40', color: 'text-blue-400' },
+          { value: '+3', color: 'text-green-400' },
+          { value: '+3', color: 'text-green-400' }
+        ],
+        'Ammi Jaan': [
+          { value: '+3', color: 'text-green-400' },
+          { value: '+0', color: 'text-red-400' },
+          { value: '+0', color: 'text-red-400' }
+        ],
+        'Abbo Jaan': [
+          { value: '+3', color: 'text-green-400' },
+          { value: '-50', color: 'text-red-400' },
+          { value: '+0', color: 'text-red-400' }
+        ],
+        'Hizzy': [
+          { value: '—', color: 'text-gray-400' },
+          { value: '-50', color: 'text-red-400' },
+          { value: '—', color: 'text-gray-400' }
+        ],
+        'aishhhhh': [
+          { value: '+3', color: 'text-green-400' },
+          { value: '-139', color: 'text-red-400' },
+          { value: '+0', color: 'text-red-400' }
+        ]
+      }
+
+      if (manualResults[playerUsername]) {
+        return manualResults[playerUsername]
+      }
+    }
+
     const results: Array<{ value: string; color: string }> = []
 
     scoredGames.forEach(game => {
