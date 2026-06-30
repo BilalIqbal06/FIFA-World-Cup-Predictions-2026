@@ -1439,11 +1439,20 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
 
   // Get today's scored games (games with actualResult set, meaning they've been processed)
   const todayScoredGames = games
-    .filter(game => 
-      game.actualResult !== undefined && 
-      game.actualResult !== null &&
-      game.date.toDateString() === selectedDate.toDateString()
-    )
+    .filter(game => {
+      if (game.actualResult === undefined || game.actualResult === null) {
+        return false
+      }
+
+      // Normalize dates to midnight for comparison (same logic as getAvailableGamesForDate)
+      const gameDate = new Date(game.date)
+      gameDate.setHours(0, 0, 0, 0)
+
+      const checkDate = new Date(selectedDate)
+      checkDate.setHours(0, 0, 0, 0)
+
+      return gameDate.getTime() === checkDate.getTime()
+    })
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
   // Calculate today's results for a specific player
