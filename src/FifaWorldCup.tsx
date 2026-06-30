@@ -1439,69 +1439,6 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
 
   // Calculate today's results for a specific player
   const getTodayResults = (playerUsername: string, scoredGames: Game[]) => {
-    console.log("getTodayResults called", playerUsername, selectedDate.toDateString())
-
-    // TEMPORARY: Return TEST for every player to verify code path
-    return [{ value: 'TEST', color: 'text-yellow-400' }]
-
-    // Manual patch for June 29, 2026
-    const isJune29 = selectedDate.toDateString() === new Date('2026-06-29').toDateString()
-    if (isJune29) {
-      const manualResults: Record<string, Array<{ value: string; color: string }>> = {
-        'DUALAPEEP': [
-          { value: '+130', color: 'text-blue-400' },
-          { value: '+0', color: 'text-red-400' },
-          { value: '+3', color: 'text-green-400' }
-        ],
-        'Bhai': [
-          { value: '+3', color: 'text-green-400' },
-          { value: '+0', color: 'text-red-400' },
-          { value: '+3', color: 'text-green-400' }
-        ],
-        'hilla billa': [
-          { value: '+3', color: 'text-green-400' },
-          { value: '+0', color: 'text-red-400' },
-          { value: '+0', color: 'text-red-400' }
-        ],
-        'faruk bhai': [
-          { value: '+3', color: 'text-green-400' },
-          { value: '+0', color: 'text-red-400' },
-          { value: '+3', color: 'text-green-400' }
-        ],
-        'ZarrishZia': [
-          { value: '+40', color: 'text-blue-400' },
-          { value: '+3', color: 'text-green-400' },
-          { value: '+3', color: 'text-green-400' }
-        ],
-        'Ammi Jaan': [
-          { value: '+3', color: 'text-green-400' },
-          { value: '+0', color: 'text-red-400' },
-          { value: '+0', color: 'text-red-400' }
-        ],
-        'Abbo Jaan': [
-          { value: '+3', color: 'text-green-400' },
-          { value: '-50', color: 'text-red-400' },
-          { value: '+0', color: 'text-red-400' }
-        ],
-        'Hizzy': [
-          { value: '—', color: 'text-gray-400' },
-          { value: '-50', color: 'text-red-400' },
-          { value: '—', color: 'text-gray-400' }
-        ],
-        'aishhhhh': [
-          { value: '+3', color: 'text-green-400' },
-          { value: '-139', color: 'text-red-400' },
-          { value: '+0', color: 'text-red-400' }
-        ]
-      }
-
-      // Return manual results if username matches, otherwise return empty array (don't fall through)
-      if (manualResults[playerUsername]) {
-        return manualResults[playerUsername]
-      }
-      return []
-    }
-
     const results: Array<{ value: string; color: string }> = []
 
     scoredGames.forEach(game => {
@@ -1698,9 +1635,33 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
   const gamesForSelectedDate = getAvailableGamesForDate(selectedDate)
 
   // Get today's scored games from the selected date's games (same as "Games Available for Prediction")
-  const todayScoredGames = gamesForSelectedDate
+  let todayScoredGames = gamesForSelectedDate
     .filter(game => game.actualResult !== undefined && game.actualResult !== null)
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+
+  // If no games scored on selected date, fall back to most recent date with scored games
+  if (todayScoredGames.length === 0) {
+    const allScoredGames = games
+      .filter(game => game.actualResult !== undefined && game.actualResult !== null)
+      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort descending
+
+    if (allScoredGames.length > 0) {
+      // Get the most recent scored date
+      const mostRecentScoredDate = new Date(allScoredGames[0].date)
+      mostRecentScoredDate.setHours(0, 0, 0, 0)
+
+      // Get all games from that date
+      todayScoredGames = games
+        .filter(game => {
+          const gameDate = new Date(game.date)
+          gameDate.setHours(0, 0, 0, 0)
+          return gameDate.getTime() === mostRecentScoredDate.getTime() &&
+                 game.actualResult !== undefined &&
+                 game.actualResult !== null
+        })
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    }
+  }
 
   // Get all games grouped by date
   const gamesByDate = games.reduce((acc, game) => {
@@ -1895,10 +1856,6 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
             >
               {showLeaderboard ? 'Hide' : 'Show'}
             </button>
-          </div>
-          {/* Debug line */}
-          <div className="text-xs text-yellow-400 mb-2">
-            selectedDate = {selectedDate.toDateString()} | usingManualPatch = {selectedDate.toDateString() === new Date('2026-06-29').toDateString() ? 'true' : 'false'}
           </div>
           {showLeaderboard && (
             <div className="space-y-2">
