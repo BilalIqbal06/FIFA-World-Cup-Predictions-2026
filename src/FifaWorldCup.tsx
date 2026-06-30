@@ -1466,7 +1466,8 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
       }
 
       if (!pred) {
-        // No prediction - show blank
+        // No prediction - show gray dash
+        results.push({ value: '—', color: 'text-gray-400' })
         return
       }
 
@@ -1891,9 +1892,9 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
                     </div>
                     <div className="flex justify-center">
                       {todayResults.length > 0 ? (
-                        <div className="flex gap-1">
+                        <div className="flex gap-1 items-center">
                           {todayResults.map((result, idx) => (
-                            <span key={idx} className={`text-sm font-medium ${result.color}`}>
+                            <span key={idx} className={`text-xs font-bold px-2 py-1 rounded-full ${result.color} bg-gray-800/50`}>
                               {result.value}
                             </span>
                           ))}
@@ -1908,6 +1909,32 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
               })}
             </div>
           )}
+
+          {/* Daily Results Legend */}
+          <div className="mt-4 pt-4 border-t border-gray-700/50">
+            <div className="flex flex-wrap gap-3 text-xs">
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-green-400"></span>
+                <span className="text-gray-400">Correct</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-red-400"></span>
+                <span className="text-gray-400">Wrong</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-blue-400"></span>
+                <span className="text-gray-400">Wager won</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-red-600"></span>
+                <span className="text-gray-400">Wager lost</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-gray-400"></span>
+                <span className="text-gray-400">No prediction</span>
+              </span>
+            </div>
+          </div>
         </div>
 
             {/* Current Date Display */}
