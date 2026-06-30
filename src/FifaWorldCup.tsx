@@ -1437,14 +1437,20 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
     .map(player => ({ username: player.username, points: player.points }))
     .sort((a, b) => b.points - a.points)
 
-  // Get today's finished games (games with status 'finished')
-  const todayFinishedGames = games.filter(game => game.status === 'finished')
+  // Get today's scored games (games with actualResult set, meaning they've been processed)
+  const todayScoredGames = games
+    .filter(game => 
+      game.actualResult !== undefined && 
+      game.actualResult !== null &&
+      game.date.toDateString() === selectedDate.toDateString()
+    )
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
   // Calculate today's results for a specific player
   const getTodayResults = (playerUsername: string) => {
     const results: Array<{ value: string; color: string }> = []
 
-    todayFinishedGames.forEach(game => {
+    todayScoredGames.forEach(game => {
       // Find this player's prediction for this game
       let pred = null
 
