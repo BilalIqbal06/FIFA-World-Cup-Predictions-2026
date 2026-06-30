@@ -1439,6 +1439,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
 
   // Calculate today's results for a specific player
   const getTodayResults = (playerUsername: string, scoredGames: Game[]) => {
+    console.log("getTodayResults called for", playerUsername, "with", scoredGames.length, "scored games:", scoredGames.map(g => g.id))
     const results: Array<{ value: string; color: string }> = []
 
     scoredGames.forEach(game => {
