@@ -1174,7 +1174,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-01T12:00:00-04:00'),
     venue: 'Atlanta',
     group: 'Round of 32',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'home',
+    homeScore: 2,
+    awayScore: 1
   },
   {
     id: '81',
@@ -1183,7 +1186,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-01T16:00:00-04:00'),
     venue: 'San Francisco Bay Area',
     group: 'Round of 32',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'home',
+    homeScore: 3,
+    awayScore: 0
   },
   {
     id: '82',
@@ -1192,7 +1198,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-01T20:00:00-04:00'),
     venue: 'Seattle',
     group: 'Round of 32',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'home',
+    homeScore: 2,
+    awayScore: 0
   },
   {
     id: '83',
@@ -1475,8 +1484,8 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
       }
 
       if (!pred) {
-        // No prediction - show gray dash
-        results.push({ value: '—', color: 'text-gray-400' })
+        // No prediction - show red +0 (same as incorrect prediction for consistent row alignment)
+        results.push({ value: '+0', color: 'text-red-400' })
         return
       }
 
@@ -1937,10 +1946,6 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
               <span className="flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-red-600"></span>
                 <span className="text-gray-400">Wager lost</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-gray-400"></span>
-                <span className="text-gray-400">No prediction</span>
               </span>
             </div>
           </div>
