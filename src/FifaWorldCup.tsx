@@ -1210,7 +1210,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-02T15:00:00-04:00'),
     venue: 'Toronto',
     group: 'Round of 32',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'home',
+    homeScore: 3,
+    awayScore: 1
   },
   {
     id: '84',
@@ -1219,7 +1222,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-02T19:00:00-04:00'),
     venue: 'Los Angeles',
     group: 'Round of 32',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'home',
+    homeScore: 2,
+    awayScore: 0
   },
   {
     id: '85',
@@ -1228,7 +1234,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-02T23:00:00-04:00'),
     venue: 'Vancouver',
     group: 'Round of 32',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'home',
+    homeScore: 2,
+    awayScore: 1
   },
   {
     id: '86',
