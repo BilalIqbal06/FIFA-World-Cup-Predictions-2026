@@ -1278,8 +1278,8 @@ export const sampleGames: Game[] = [
   // Round of 16
   {
     id: '89',
-    homeTeam: { id: 'tba', name: 'Winner match 74', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 77', flag: '🏆' },
+    homeTeam: { id: 'py', name: 'Paraguay', flag: '�🇾' },
+    awayTeam: { id: 'fr', name: 'France', flag: '�🇷' },
     date: new Date('2026-07-04T17:00:00-04:00'),
     venue: 'Philadelphia',
     group: 'Round of 16',
@@ -1287,8 +1287,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '90',
-    homeTeam: { id: 'tba', name: 'Winner match 73', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 75', flag: '🏆' },
+    homeTeam: { id: 'ca', name: 'Canada', flag: '�🇦' },
+    awayTeam: { id: 'ma', name: 'Morocco', flag: '�🇦' },
     date: new Date('2026-07-04T13:00:00-04:00'),
     venue: 'Houston',
     group: 'Round of 16',
@@ -1296,8 +1296,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '91',
-    homeTeam: { id: 'tba', name: 'Winner match 76', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 78', flag: '🏆' },
+    homeTeam: { id: 'br', name: 'Brazil', flag: '�🇷' },
+    awayTeam: { id: 'no', name: 'Norway', flag: '�🇴' },
     date: new Date('2026-07-05T16:00:00-04:00'),
     venue: 'New Jersey',
     group: 'Round of 16',
@@ -1305,8 +1305,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '92',
-    homeTeam: { id: 'tba', name: 'Winner match 79', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 80', flag: '🏆' },
+    homeTeam: { id: 'mx', name: 'Mexico', flag: '�🇽' },
+    awayTeam: { id: 'en', name: 'England', flag: '�󠁧󠁢󠁥󠁮󠁧󠁿' },
     date: new Date('2026-07-05T20:00:00-04:00'),
     venue: 'Mexico City',
     group: 'Round of 16',
@@ -1314,8 +1314,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '93',
-    homeTeam: { id: 'tba', name: 'Winner match 83', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 84', flag: '🏆' },
+    homeTeam: { id: 'pt', name: 'Portugal', flag: '🇵�' },
+    awayTeam: { id: 'es', name: 'Spain', flag: '🇪�' },
     date: new Date('2026-07-06T15:00:00-04:00'),
     venue: 'Dallas',
     group: 'Round of 16',
@@ -1323,8 +1323,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '94',
-    homeTeam: { id: 'tba', name: 'Winner match 81', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 82', flag: '🏆' },
+    homeTeam: { id: 'us', name: 'USA', flag: '🇺�' },
+    awayTeam: { id: 'be', name: 'Belgium', flag: '🇧�' },
     date: new Date('2026-07-06T20:00:00-04:00'),
     venue: 'Seattle',
     group: 'Round of 16',
@@ -1332,8 +1332,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '95',
-    homeTeam: { id: 'tba', name: 'Winner match 86', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 88', flag: '🏆' },
+    homeTeam: { id: 'ar', name: 'Argentina', flag: '🇦�' },
+    awayTeam: { id: 'eg', name: 'Egypt', flag: '🇪�' },
     date: new Date('2026-07-07T12:00:00-04:00'),
     venue: 'Atlanta',
     group: 'Round of 16',
@@ -1341,8 +1341,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '96',
-    homeTeam: { id: 'tba', name: 'Winner match 85', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 87', flag: '🏆' },
+    homeTeam: { id: 'ch', name: 'Switzerland', flag: '🇨�' },
+    awayTeam: { id: 'co', name: 'Colombia', flag: '🇨�' },
     date: new Date('2026-07-07T16:00:00-04:00'),
     venue: 'Vancouver',
     group: 'Round of 16',
