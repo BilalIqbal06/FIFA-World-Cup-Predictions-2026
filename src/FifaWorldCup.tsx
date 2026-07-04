@@ -1585,6 +1585,11 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
       return game.status === 'upcoming'
     }
     
+    // Round of 16: open immediately for now (temporary rule)
+    if (game.group === 'Round of 16') {
+      return game.status === 'upcoming'
+    }
+    
     // Other knockout stage games: day before rule
     const predictionOpenDate = new Date(gameDate)
     predictionOpenDate.setDate(predictionOpenDate.getDate() - 1)
