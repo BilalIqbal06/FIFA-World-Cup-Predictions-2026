@@ -1308,9 +1308,9 @@ export const sampleGames: Game[] = [
     venue: 'New Jersey',
     group: 'Round of 16',
     status: 'finished',
-    actualResult: 'home',
-    homeScore: 2,
-    awayScore: 1
+    actualResult: 'away',
+    homeScore: 1,
+    awayScore: 2
   },
   {
     id: '92',
@@ -1320,9 +1320,9 @@ export const sampleGames: Game[] = [
     venue: 'Mexico City',
     group: 'Round of 16',
     status: 'finished',
-    actualResult: 'home',
-    homeScore: 2,
-    awayScore: 1
+    actualResult: 'away',
+    homeScore: 1,
+    awayScore: 2
   },
   {
     id: '93',
@@ -1526,7 +1526,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
         if (isCorrect) {
           results.push({ value: `+${pred.wager}`, color: 'text-blue-400' })
         } else {
-          results.push({ value: `-${pred.wager}`, color: 'text-red-400' })
+          results.push({ value: `-${pred.wager}`, color: 'text-red-600' })
         }
       } else {
         if (isCorrect) {
