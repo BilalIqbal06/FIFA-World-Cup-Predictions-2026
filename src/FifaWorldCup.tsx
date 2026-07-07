@@ -1332,9 +1332,9 @@ export const sampleGames: Game[] = [
     venue: 'Dallas',
     group: 'Round of 16',
     status: 'finished',
-    actualResult: 'home',
-    homeScore: 2,
-    awayScore: 1
+    actualResult: 'away',
+    homeScore: 1,
+    awayScore: 2
   },
   {
     id: '94',
@@ -1346,7 +1346,7 @@ export const sampleGames: Game[] = [
     status: 'finished',
     actualResult: 'away',
     homeScore: 1,
-    awayScore: 2
+    awayScore: 4
   },
   {
     id: '95',
