@@ -1331,7 +1331,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-06T15:00:00-04:00'),
     venue: 'Dallas',
     group: 'Round of 16',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'home',
+    homeScore: 2,
+    awayScore: 1
   },
   {
     id: '94',
@@ -1340,7 +1343,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-06T20:00:00-04:00'),
     venue: 'Seattle',
     group: 'Round of 16',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'away',
+    homeScore: 1,
+    awayScore: 2
   },
   {
     id: '95',
