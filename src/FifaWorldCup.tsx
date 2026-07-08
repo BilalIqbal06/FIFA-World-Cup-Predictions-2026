@@ -1355,7 +1355,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-07T12:00:00-04:00'),
     venue: 'Atlanta',
     group: 'Round of 16',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'home',
+    homeScore: 3,
+    awayScore: 2
   },
   {
     id: '96',
@@ -1364,7 +1367,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-07T16:00:00-04:00'),
     venue: 'Vancouver',
     group: 'Round of 16',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'away',
+    homeScore: 0,
+    awayScore: 0
   },
   // Quarter Finals
   {
