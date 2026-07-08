@@ -1368,7 +1368,7 @@ export const sampleGames: Game[] = [
     venue: 'Vancouver',
     group: 'Round of 16',
     status: 'finished',
-    actualResult: 'away',
+    actualResult: 'home',
     homeScore: 0,
     awayScore: 0
   },
