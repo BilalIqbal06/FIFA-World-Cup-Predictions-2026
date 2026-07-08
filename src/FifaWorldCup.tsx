@@ -1555,7 +1555,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
 
   // Check if a game is in a wager-eligible round
   const isWagerEligibleRound = (game: Game): boolean => {
-    const eligibleRounds = ['Round of 32', 'Round of 16', 'Quarterfinals', 'Semifinals']
+    const eligibleRounds = ['Round of 32', 'Round of 16', 'Quarter Final', 'Semi Final']
     return eligibleRounds.includes(game.group)
   }
 
