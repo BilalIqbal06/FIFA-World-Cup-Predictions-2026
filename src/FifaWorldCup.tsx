@@ -1375,8 +1375,8 @@ export const sampleGames: Game[] = [
   // Quarter Finals
   {
     id: '97',
-    homeTeam: { id: 'tba', name: 'Winner match 89', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 90', flag: '🏆' },
+    homeTeam: { id: 'fr', name: 'France', flag: '�🇷' },
+    awayTeam: { id: 'ma', name: 'Morocco', flag: '�🇦' },
     date: new Date('2026-07-09T16:00:00-04:00'),
     venue: 'Boston',
     group: 'Quarter Final',
@@ -1384,8 +1384,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '98',
-    homeTeam: { id: 'tba', name: 'Winner match 93', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 94', flag: '🏆' },
+    homeTeam: { id: 'es', name: 'Spain', flag: '�🇸' },
+    awayTeam: { id: 'be', name: 'Belgium', flag: '�🇪' },
     date: new Date('2026-07-10T15:00:00-04:00'),
     venue: 'Los Angeles',
     group: 'Quarter Final',
@@ -1393,8 +1393,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '99',
-    homeTeam: { id: 'tba', name: 'Winner match 91', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 92', flag: '🏆' },
+    homeTeam: { id: 'no', name: 'Norway', flag: '🇳�' },
+    awayTeam: { id: 'en', name: 'England', flag: '�󠁧󠁢󠁥󠁮󠁧󠁿' },
     date: new Date('2026-07-11T17:00:00-04:00'),
     venue: 'Miami',
     group: 'Quarter Final',
@@ -1402,8 +1402,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '100',
-    homeTeam: { id: 'tba', name: 'Winner match 95', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 96', flag: '🏆' },
+    homeTeam: { id: 'ar', name: 'Argentina', flag: '🇦�' },
+    awayTeam: { id: 'ch', name: 'Switzerland', flag: '🇨�' },
     date: new Date('2026-07-11T21:00:00-04:00'),
     venue: 'Kansas City',
     group: 'Quarter Final',
@@ -1863,7 +1863,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
               <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 border border-yellow-500/40 rounded-lg p-4">
                 <h3 className="text-lg font-semibold text-yellow-400 mb-3">💰 Betting (Knockout Rounds Only)</h3>
                 <p className="text-gray-200 mb-2">Each player gets <span className="text-white font-bold">3 total wagers</span> distributed as:</p>
-                <p className="text-gray-300 text-sm mb-4">• Round of 32: 1 wager<br/>• Round of 16: 1 wager<br/>• Quarterfinals + Semifinals: 1 wager combined</p>
+                <p className="text-gray-300 text-sm mb-4">• Round of 32: 1 wager<br/>• Round of 16: 1 wager<br/>• Each player gets 1 wager total across the Quarterfinals and Semifinals</p>
                 <p className="text-gray-200 mb-4">For every knockout match, you can either:<br/>• Make a normal prediction (no risk)<br/>• Use your wager for that round (high risk, high reward)</p>
                 <p className="text-gray-200 font-semibold mb-2">Wager Rules</p>
                 <p className="text-gray-300 text-sm mb-4">• Minimum wager: 4 points<br/>• Maximum wager: Your current total points<br/>• You can only wager once per wager group<br/>• No wagers in Third Place or Final</p>
