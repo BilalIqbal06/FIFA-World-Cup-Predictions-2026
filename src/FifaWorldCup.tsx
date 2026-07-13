@@ -1608,12 +1608,22 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
     if (game.group === 'Round of 32') {
       return game.status === 'upcoming'
     }
-    
+
     // Round of 16: open immediately for now (temporary rule)
     if (game.group === 'Round of 16') {
       return game.status === 'upcoming'
     }
-    
+
+    // Quarter Final: open immediately for now (temporary rule)
+    if (game.group === 'Quarter Final') {
+      return game.status === 'upcoming'
+    }
+
+    // Semi Final: open immediately for now (temporary rule)
+    if (game.group === 'Semi Final') {
+      return game.status === 'upcoming'
+    }
+
     // Other knockout stage games: day before rule
     const predictionOpenDate = new Date(gameDate)
     predictionOpenDate.setDate(predictionOpenDate.getDate() - 1)
