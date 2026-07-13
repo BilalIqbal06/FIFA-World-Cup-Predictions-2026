@@ -1412,8 +1412,8 @@ export const sampleGames: Game[] = [
   // Semi Finals
   {
     id: '101',
-    homeTeam: { id: 'tba', name: 'Winner match 97', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 98', flag: '🏆' },
+    homeTeam: { id: 'fr', name: 'France', flag: '�🇷' },
+    awayTeam: { id: 'es', name: 'Spain', flag: '�🇸' },
     date: new Date('2026-07-14T15:00:00-04:00'),
     venue: 'Dallas',
     group: 'Semi Final',
@@ -1421,8 +1421,8 @@ export const sampleGames: Game[] = [
   },
   {
     id: '102',
-    homeTeam: { id: 'tba', name: 'Winner match 99', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 100', flag: '🏆' },
+    homeTeam: { id: 'en', name: 'England', flag: '�󠁧󠁢󠁥󠁮󠁧󠁿' },
+    awayTeam: { id: 'ar', name: 'Argentina', flag: '🇦�' },
     date: new Date('2026-07-15T15:00:00-04:00'),
     venue: 'Atlanta',
     group: 'Semi Final',
