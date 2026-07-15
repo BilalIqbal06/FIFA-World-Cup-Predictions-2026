@@ -1417,7 +1417,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-14T15:00:00-04:00'),
     venue: 'Dallas',
     group: 'Semi Final',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'away',
+    homeScore: 0,
+    awayScore: 2
   },
   {
     id: '102',
