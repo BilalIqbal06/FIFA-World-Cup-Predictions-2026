@@ -1429,7 +1429,10 @@ export const sampleGames: Game[] = [
     date: new Date('2026-07-15T15:00:00-04:00'),
     venue: 'Atlanta',
     group: 'Semi Final',
-    status: 'upcoming'
+    status: 'finished',
+    actualResult: 'away',
+    homeScore: 1,
+    awayScore: 2
   },
   // Bronze Medal Game
   {
