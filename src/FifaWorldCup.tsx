@@ -1565,6 +1565,12 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
     return eligibleRounds.includes(game.group)
   }
 
+  // Check if a game is a knockout match (no ties allowed)
+  const isKnockoutMatch = (game: Game): boolean => {
+    const knockoutRounds = ['Round of 32', 'Round of 16', 'Quarter Final', 'Semi Final', 'Bronze Medal', 'Final']
+    return knockoutRounds.includes(game.group)
+  }
+
   // Check if player has already used a wager in a specific game ID range
   const hasUsedWagerInRange = (gameId: string): boolean => {
     const gameIdNum = parseInt(gameId, 10)
@@ -2319,7 +2325,7 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
                           >
                             {game.homeTeam.flag} {game.homeTeam.name}
                           </button>
-                          {!isWagerEligibleRound(game) && (
+                          {!isKnockoutMatch(game) && (
                             <button
                               onClick={() => handlePrediction(game.id, 'tie')}
                               disabled={!isAvailable}
