@@ -1437,8 +1437,8 @@ export const sampleGames: Game[] = [
   // Bronze Medal Game
   {
     id: '103',
-    homeTeam: { id: 'tba', name: 'Runner-up match 101', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Runner-up match 102', flag: '🏆' },
+    homeTeam: { id: 'fr', name: 'France', flag: '�🇷' },
+    awayTeam: { id: 'en', name: 'England', flag: '�󠁧󠁢󠁥󠁮󠁧󠁿' },
     date: new Date('2026-07-18T17:00:00-04:00'),
     venue: 'Miami',
     group: 'Bronze Medal',
@@ -1447,8 +1447,8 @@ export const sampleGames: Game[] = [
   // Final
   {
     id: '104',
-    homeTeam: { id: 'tba', name: 'Winner match 101', flag: '🏆' },
-    awayTeam: { id: 'tba', name: 'Winner match 102', flag: '🏆' },
+    homeTeam: { id: 'es', name: 'Spain', flag: '🇪�' },
+    awayTeam: { id: 'ar', name: 'Argentina', flag: '🇦�' },
     date: new Date('2026-07-19T15:00:00-04:00'),
     venue: 'New Jersey',
     group: 'Final',
@@ -1627,6 +1627,16 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
 
     // Semi Final: open immediately for now (temporary rule)
     if (game.group === 'Semi Final') {
+      return game.status === 'upcoming'
+    }
+
+    // Bronze Medal: open immediately for now (temporary rule)
+    if (game.group === 'Bronze Medal') {
+      return game.status === 'upcoming'
+    }
+
+    // Final: open immediately for now (temporary rule)
+    if (game.group === 'Final') {
       return game.status === 'upcoming'
     }
 
