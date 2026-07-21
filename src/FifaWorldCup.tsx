@@ -1463,9 +1463,10 @@ interface FifaWorldCupProps {
   allPredictions?: Map<string, Map<string, any>> // gameId -> playerUsername -> prediction
   onPlaceBet: (teamId: string, teamName: string) => void
   onPrediction: (gameId: string, prediction: string, wager?: number) => Promise<void>
+  onStartCeremony?: () => void
 }
 
-export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, allPredictions, onPlaceBet, onPrediction }: FifaWorldCupProps) {
+export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, allPredictions, onPlaceBet, onPrediction, onStartCeremony }: FifaWorldCupProps) {
   // Add defensive checks
   if (!currentPlayer) {
     return (
@@ -1957,12 +1958,22 @@ export default function FifaWorldCup({ currentPlayer, allPlayers, predictions, a
         <div className="bg-gradient-to-br from-green-950/80 via-blue-950/80 to-red-950/80 backdrop-blur-lg rounded-2xl p-6 mb-8 border border-yellow-500/30 shadow-xl">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-white">🏆 Leaderboard</h2>
-            <button
-              onClick={() => setShowLeaderboard(!showLeaderboard)}
-              className="text-gray-400 hover:text-white text-sm"
-            >
-              {showLeaderboard ? 'Hide' : 'Show'}
-            </button>
+            <div className="flex items-center gap-3">
+              {onStartCeremony && (
+                <button
+                  onClick={onStartCeremony}
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all shadow-lg"
+                >
+                  🏆 Trophy Ceremony
+                </button>
+              )}
+              <button
+                onClick={() => setShowLeaderboard(!showLeaderboard)}
+                className="text-gray-400 hover:text-white text-sm"
+              >
+                {showLeaderboard ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </div>
           {showLeaderboard && (
             <div className="space-y-2">

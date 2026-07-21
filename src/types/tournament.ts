@@ -1,6 +1,6 @@
 // Tournament Types and Interfaces
 
-export type ScreenType = 'welcome' | 'tournament' | 'error'
+export type ScreenType = 'welcome' | 'tournament' | 'error' | 'ceremony'
 
 export interface Player {
   id: string

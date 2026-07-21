@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import WelcomeScreen from './WelcomeScreen'
 import ErrorScreen from './ErrorScreen'
+import TrophyCeremony from './TrophyCeremony'
 import FifaWorldCup from '../FifaWorldCup'
 import { supabaseService } from '../services/supabaseService'
 import type { Player, ScreenType } from '../types/tournament'
@@ -394,6 +395,15 @@ export default function TournamentApp() {
     )
   }
 
+  if (currentScreen === 'ceremony') {
+    return (
+      <TrophyCeremony
+        allPlayers={allPlayers}
+        onViewLeaderboard={() => setCurrentScreen('tournament')}
+      />
+    )
+  }
+
   if (currentScreen === 'tournament' && currentPlayer) {
     return (
       <div>
@@ -441,6 +451,7 @@ export default function TournamentApp() {
             allPredictions={allPredictions}
             onPlaceBet={handlePlaceBet}
             onPrediction={(gameId, prediction, wager) => handlePrediction(gameId, prediction, wager)}
+            onStartCeremony={() => setCurrentScreen('ceremony')}
           />
         )}
       </div>
